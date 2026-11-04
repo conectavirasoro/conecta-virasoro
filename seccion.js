@@ -1,0 +1,19 @@
+const secciones={
+servicios:{titulo:"Servicios",emoji:"🔧",subtitulo:"Encontrá profesionales y trabajadores de Virasoro.",categorias:["Electricidad","Plomería","Albañilería","Peluquería y belleza","Informática","Limpieza","Jardinería","Otros servicios"],pregunta:"¿Qué servicio ofrecés?",ejemplo:"Ej.: Electricista matriculado"},
+empleos:{titulo:"Empleos",emoji:"💼",subtitulo:"Conectamos a quienes buscan trabajo con quienes necesitan incorporar personal.",categorias:["Administración","Comercio","Gastronomía","Construcción","Transporte","Oficios","Otros"],pregunta:"¿Qué querés publicar?",ejemplo:"Ej.: Se busca vendedor/a",empleo:true},
+alquileres:{titulo:"Alquileres",emoji:"🏠",subtitulo:"Casas, departamentos, habitaciones y locales en alquiler.",categorias:["Casa","Departamento","Habitación","Local comercial","Galpón","Otros"],pregunta:"¿Qué propiedad ofrecés?",ejemplo:"Ej.: Departamento de 2 habitaciones"},
+"compra-venta":{titulo:"Compra y venta",emoji:"🛒",subtitulo:"Publicá productos nuevos o usados y encontrá oportunidades cerca tuyo.",categorias:["Hogar","Electrodomésticos","Muebles","Ropa y calzado","Herramientas","Tecnología","Otros"],pregunta:"¿Qué producto ofrecés?",ejemplo:"Ej.: Vendo bicicleta en buen estado"},
+vehiculos:{titulo:"Vehículos",emoji:"🚗",subtitulo:"Autos, motos, camionetas y otros vehículos.",categorias:["Autos","Motos","Camionetas","Camiones","Maquinaria","Repuestos","Otros"],pregunta:"¿Qué vehículo o producto ofrecés?",ejemplo:"Ej.: Vendo moto 150 cc"}
+};
+const clave=document.body.dataset.seccion;const cfg=secciones[clave];const listado=[];
+function norm(t){return String(t||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")}
+function render(lista){const el=document.getElementById("listado");if(!lista.length){el.innerHTML='<div class="empty"><h2>🔎 Todavía no hay publicaciones aprobadas</h2><p>Estamos sumando propuestas de la comunidad. ¿Querés ser de los primeros en publicar?</p><a class="btn" href="#publicar">Enviar mi publicación</a></div>';return}el.innerHTML=lista.map(x=>'<article class="item"><span class="tag">'+x.tipo+'</span><h3>'+x.titulo+'</h3><p>'+x.descripcion+'</p><p>📍 '+x.ubicacion+'</p><div class="actions"><a href="https://wa.me/'+x.telefono+'" target="_blank" rel="noopener">💬 Contactar</a></div></article>').join("")}
+function filtrar(){const q=norm(document.getElementById("busqueda").value);render(listado.filter(x=>norm([x.titulo,x.descripcion,x.tipo,x.ubicacion].join(" ")).includes(q)))}
+document.getElementById("busqueda").addEventListener("keydown",e=>{if(e.key==="Enter")filtrar()});
+document.getElementById("categorias").innerHTML=cfg.categorias.map(c=>'<option>'+c+'</option>').join("");
+document.getElementById("campoTituloLabel").textContent=cfg.pregunta;
+document.getElementById("titulo").placeholder=cfg.ejemplo;
+if(cfg.empleo){document.getElementById("modoEmpleo").hidden=false;document.getElementById("modoEmpleoSelect").required=true}
+document.getElementById("formPublicacion").addEventListener("submit",e=>{e.preventDefault();const ids=["tipo","titulo","descripcion","ubicacion","precio","nombre","telefono","redes"];const labels=["Categoría","Título","Descripción","Ubicación","Precio o remuneración","Nombre de contacto","WhatsApp","Redes o enlace"];let msg="SOLICITUD PARA "+cfg.titulo.toUpperCase()+" - CONECTA VIRASORO\n\n";ids.forEach((id,i)=>{const v=document.getElementById(id)?.value.trim();if(v)msg+=labels[i]+": "+v+"\n"});const modo=document.getElementById("modoEmpleoSelect")?.value;if(modo)msg+="Tipo de aviso: "+modo+"\n";msg+="\nSolicito revisión y aprobación antes de publicar.";window.open("https://wa.me/5493758565118?text="+encodeURIComponent(msg),"_blank","noopener")});
+render(listado);
+if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}
