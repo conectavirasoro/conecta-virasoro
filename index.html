@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conecta Virasoro</title>
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f4f6fa;
+  color:#17243a;
+}
+header{
+  background:#102b46;
+  color:white;
+  padding:22px 7%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+}
+.logo{font-size:25px;font-weight:bold}
+.logo span{color:#36d6a0}
+nav a{
+  color:white;
+  text-decoration:none;
+  margin:8px;
+  font-size:14px;
+}
+.hero{
+  background:linear-gradient(120deg,#102b46,#176b79);
+  color:white;
+  text-align:center;
+  padding:75px 20px;
+}
+.hero h1{font-size:38px;margin:0 0 15px}
+.hero p{font-size:18px;line-height:1.5}
+.search{
+  background:white;
+  max-width:520px;
+  margin:28px auto 0;
+  padding:8px;
+  border-radius:10px;
+  display:flex;
+}
+.search input{
+  flex:1;
+  min-width:0;
+  border:0;
+  padding:12px;
+  font-size:15px;
+  outline:none;
+}
+.search button{
+  background:#20b98b;
+  color:white;
+  border:0;
+  padding:12px 18px;
+  border-radius:7px;
+  cursor:pointer;
+}
+section{padding:45px 7%}
+h2{text-align:center;margin-bottom:30px}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+  gap:18px;
+}
+.card{
+  background:white;
+  padding:25px 15px;
+  border-radius:12px;
+  text-align:center;
+  box-shadow:0 3px 14px #0000000d;
+}
+.card .emoji{font-size:35px}
+.card h3{margin:12px 0 5px}
+.card p{color:#667085;font-size:14px}
+.info{
+  background:#e5f6f1;
+  border-radius:14px;
+  text-align:center;
+  padding:35px 20px;
+}
+.info a{
+  display:inline-block;
+  background:#102b46;
+  color:white;
+  text-decoration:none;
+  padding:13px 22px;
+  border-radius:8px;
+}
+footer{
+  background:#102b46;
+  color:white;
+  text-align:center;
+  padding:25px;
+  font-size:14px;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Conecta <span>Virasoro</span></div>
+  <nav>
+    <a href="#categorias">Categorías</a>
+    <a href="#nosotros">Nosotros</a>
+  </nav>
+</header>
+
+<div class="hero">
+  <h1>¡Virasoro está conectado!</h1>
+  <p>Encontrá comercios, servicios, empleos y oportunidades<br>
+  en un solo lugar.</p>
+  <div class="search">
+    <input id="busqueda" placeholder="¿Qué estás buscando?">
+    <button onclick="buscar()">Buscar</button>
+  </div>
+</div>
+
+<section id="categorias">
+  <h2>Explorá nuestras categorías</h2>
+  <div class="grid" id="categoriasGrid">
+    <div class="card"><div class="emoji">🏪</div><h3>Comercios</h3><p>Negocios de nuestra ciudad</p></div>
+    <div class="card"><div class="emoji">🔧</div><h3>Servicios</h3><p>Profesionales y trabajadores</p></div>
+    <div class="card"><div class="emoji">💼</div><h3>Empleos</h3><p>Oportunidades laborales</p></div>
+    <div class="card"><div class="emoji">🏠</div><h3>Alquileres</h3><p>Casas y departamentos</p></div>
+    <div class="card"><div class="emoji">🛒</div><h3>Compra y venta</h3><p>Productos y publicaciones</p></div>
+    <div class="card"><div class="emoji">🚗</div><h3>Vehículos</h3><p>Autos y motos</p></div>
+  </div>
+</section>
+
+<section id="nosotros">
+  <div class="info">
+    <h2>Tu ciudad, más conectada</h2>
+    <p>Un espacio para impulsar los comercios,
+    emprendedores y oportunidades de Virasoro
+    y localidades cercanas.</p>
+    <a href="mailto:contacto@conectavirasoro.com">Contactanos</a>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 Conecta Virasoro</p>
+  <p>Conectando personas, negocios y oportunidades.</p>
+</footer>
+
+<script>
+function buscar(){
+  const valor=document.getElementById('busqueda').value.trim();
+  if(!valor){
+    alert('Escribí qué estás buscando');
+    return;
+  }
+  const tarjetas=document.querySelectorAll('.card');
+  let encontrados=0;
+  tarjetas.forEach(card=>{
+    const coincide=card.innerText.toLowerCase().includes(valor.toLowerCase());
+    card.style.display=coincide?'block':'none';
+    if(coincide) encontrados++;
+  });
+  if(!encontrados) alert('No encontramos esa categoría. ¡Pronto habrá más opciones!');
+}
+</script>
+
+</body>
+</html>
