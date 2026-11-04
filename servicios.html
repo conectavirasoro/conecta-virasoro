@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#102b46"><link rel="manifest" href="manifest.json"><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="stylesheet" href="seccion.css"><title>Servicios | Conecta Virasoro</title></head>
+<body data-seccion="servicios">
+<header><div class="logo">Conecta <span>Virasoro</span></div><a href="index.html">← Volver al inicio</a></header>
+<div class="hero"><h1>🔧 Servicios en Virasoro</h1><p>Encontrá profesionales y trabajadores de Virasoro.</p><div class="search"><input id="busqueda" placeholder="Buscar en servicios..."><button onclick="filtrar()">Buscar</button></div></div>
+<section><h2>Explorá las publicaciones</h2><div id="listado"></div></section>
+<section id="publicar"><div class="formbox"><h2>📢 Publicá en Servicios</h2><p>La publicación es gratuita durante esta etapa inicial. Enviá tus datos para que podamos revisarlos.</p>
+<form class="form" id="formPublicacion">
+<div class="field" id="modoEmpleo" hidden><label for="modoEmpleoSelect">Tipo de aviso</label><select id="modoEmpleoSelect"><option value="">Elegí una opción</option><option>Ofrezco empleo</option><option>Busco trabajo</option></select></div>
+<div class="field"><label for="tipo">Categoría *</label><select id="categorias" required></select></div>
+<div class="field full"><label id="campoTituloLabel" for="titulo">¿Qué servicio ofrecés? *</label><input id="titulo" required placeholder="Ej.: Electricista, plomero o peluquera"></div>
+<div class="field full"><label for="descripcion">Descripción *</label><textarea id="descripcion" required placeholder="Agregá detalles importantes, características, requisitos o condiciones..."></textarea></div>
+<div class="field"><label for="ubicacion">Zona o localidad *</label><input id="ubicacion" required placeholder="Ej.: Gobernador Virasoro"></div>
+<div class="field"><label for="precio">Precio / remuneración (opcional)</label><input id="precio" placeholder="Ej.: A convenir"></div>
+<div class="field"><label for="nombre">Nombre de contacto *</label><input id="nombre" required></div>
+<div class="field"><label for="telefono">WhatsApp *</label><input id="telefono" type="tel" required placeholder="Tu número de contacto"></div>
+<div class="field full"><label for="redes">Fotos, redes o enlace (opcional)</label><input id="redes" placeholder="Pegá un enlace público si tenés"></div>
+<div class="field full"><div class="note">🔒 Tu solicitud se envía al WhatsApp de Conecta Virasoro. Revisaremos los datos antes de publicar. Nunca compartas claves, códigos bancarios ni datos sensibles.</div></div>
+<button type="submit">📲 Enviar solicitud por WhatsApp</button></form></div></section>
+<footer><p>© 2026 Conecta Virasoro · Conectando personas y oportunidades.</p></footer><script src="seccion.js"></script></body></html>
