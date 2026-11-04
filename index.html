@@ -3,266 +3,79 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Conecta Virasoro</title>
+<meta name="theme-color" content="#102b46">
+<meta name="description" content="Encontrá comercios, servicios, empleos, alquileres, productos y vehículos en Virasoro y localidades cercanas.">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<title>Conecta Virasoro | Tu ciudad, más conectada</title>
 <style>
-*{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:#f4f6fa;
-  color:#17243a;
-}
-header{
-  background:#102b46;
-  color:white;
-  padding:22px 7%;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  flex-wrap:wrap;
-}
-.logo{font-size:25px;font-weight:bold}
-.logo span{color:#36d6a0}
-nav a{
-  color:white;
-  text-decoration:none;
-  margin:8px;
-  font-size:14px;
-}
-.hero{
-  background:linear-gradient(120deg,#102b46,#176b79);
-  color:white;
-  text-align:center;
-  padding:75px 20px;
-}
-.hero h1{font-size:38px;margin:0 0 15px}
-.hero p{font-size:18px;line-height:1.5}
-.search{
-  background:white;
-  max-width:520px;
-  margin:28px auto 0;
-  padding:8px;
-  border-radius:10px;
-  display:flex;
-}
-.search input{
-  flex:1;
-  min-width:0;
-  border:0;
-  padding:12px;
-  font-size:15px;
-  outline:none;
-}
-.search button{
-  background:#20b98b;
-  color:white;
-  border:0;
-  padding:12px 18px;
-  border-radius:7px;
-  cursor:pointer;
-}
-section{padding:45px 7%}
-h2{text-align:center;margin-bottom:30px}
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
-  gap:18px;
-}
-.card{
-  background:white;
-  padding:25px 15px;
-  border-radius:12px;
-  text-align:center;
-  box-shadow:0 3px 14px #0000000d;
-}
-.card .emoji{font-size:35px}
-.card h3{margin:12px 0 5px}
-.card p{color:#667085;font-size:14px}
-.info{
-  background:#e5f6f1;
-  border-radius:14px;
-  text-align:center;
-  padding:35px 20px;
-}
-.info a{
-  display:inline-block;
-  background:#102b46;
-  color:white;
-  text-decoration:none;
-  padding:13px 22px;
-  border-radius:8px;
-}
-footer{
-  background:#102b46;
-  color:white;
-  text-align:center;
-  padding:25px;
-  font-size:14px;
-}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f4f6fa;color:#17243a}
+header{background:#102b46;color:#fff;padding:18px 7%;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.logo{font-size:25px;font-weight:800}.logo span{color:#36d6a0}nav{display:flex;gap:15px;flex-wrap:wrap}nav a{color:#fff;text-decoration:none;font-size:14px}
+.hero{background:linear-gradient(120deg,#102b46,#176b79);color:#fff;text-align:center;padding:72px 20px}
+.hero h1{font-size:clamp(30px,5vw,44px);margin:0 0 14px}.hero p{font-size:18px;line-height:1.6;margin:0}
+.search{display:flex;max-width:570px;margin:28px auto 0;background:#fff;padding:7px;border-radius:11px}
+.search input{flex:1;min-width:0;border:0;padding:13px;font-size:16px;outline:0}.search button,.primary{background:#20b98b;color:#fff;border:0;padding:13px 20px;border-radius:8px;font-weight:bold;cursor:pointer;text-decoration:none}
+section{padding:46px 7%}h2{text-align:center;margin:0 0 28px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:18px}
+.card{display:block;background:#fff;padding:25px 17px;border-radius:14px;text-align:center;box-shadow:0 3px 14px #0000000d;text-decoration:none;color:inherit;transition:.2s}
+.card:hover{transform:translateY(-4px);box-shadow:0 8px 22px #00000012}.emoji{font-size:38px}.card h3{margin:12px 0 6px}.card p{margin:0;color:#667085;font-size:14px}
+.info{background:#e5f6f1;border-radius:16px;text-align:center;padding:36px 22px}.info p{line-height:1.6}.info a{display:inline-block;background:#102b46;color:#fff;text-decoration:none;padding:13px 22px;border-radius:8px}
+.publish{max-width:720px;margin:auto;background:#fff;padding:28px;border-radius:16px;box-shadow:0 3px 18px #0000000d}.publish p{text-align:center;color:#667085;line-height:1.5}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:14px}.field{display:flex;flex-direction:column;gap:7px}.field.full{grid-column:1/-1}.field label{font-weight:bold;font-size:14px}.field input,.field select,.field textarea{width:100%;padding:12px;border:1px solid #d5dce5;border-radius:8px;font:15px Arial}.field textarea{min-height:90px}
+.form button{grid-column:1/-1;background:#20b98b;color:#fff;border:0;border-radius:8px;padding:15px;font-weight:bold;font-size:16px;cursor:pointer}
+.note{font-size:13px;background:#eaf8f3;color:#176b55;padding:13px;border-radius:8px;line-height:1.5}
+footer{background:#102b46;color:#fff;text-align:center;padding:25px;font-size:14px}footer a{color:#8ee8cb}
+@media(max-width:600px){header{justify-content:center;text-align:center}nav{justify-content:center}.hero{padding:55px 18px}.form{grid-template-columns:1fr}.field.full,.form button{grid-column:auto}.publish{padding:20px}.search button{padding:12px}}
 </style>
 </head>
 <body>
-
 <header>
-  <div class="logo">Conecta <span>Virasoro</span></div>
-  <nav>
-    <a href="#categorias">Categorías</a>
-    <a href="#nosotros">Nosotros</a>
-  </nav>
+ <div class="logo">Conecta <span>Virasoro</span></div>
+ <nav><a href="#categorias">Categorías</a><a href="#publicar">Publicar</a><a href="#nosotros">Nosotros</a></nav>
 </header>
-
+<main>
 <div class="hero">
-  <h1>¡Virasoro está conectado!</h1>
-  <p>Encontrá comercios, servicios, empleos y oportunidades<br>
-  en un solo lugar.</p>
-  <div class="search">
-    <input id="busqueda" placeholder="¿Qué estás buscando?">
-    <button onclick="buscar()">Buscar</button>
-  </div>
+ <h1>¡Virasoro está conectado!</h1>
+ <p>Encontrá comercios, servicios, empleos y oportunidades<br>en un solo lugar.</p>
+ <div class="search"><input id="busqueda" placeholder="¿Qué estás buscando?" aria-label="Buscar categoría"><button onclick="buscar()">Buscar</button></div>
 </div>
-
 <section id="categorias">
-  <h2>Explorá nuestras categorías</h2>
-  <div class="grid" id="categoriasGrid">
-    <a href="comercios.html" class="card" style="text-decoration:none;color:inherit;cursor:pointer">
-  <div class="emoji">🏪</div>
-  <h3>Comercios</h3>
-  <p>Negocios de nuestra ciudad</p>
-</a>
-    <div class="card"><div class="emoji">🔧</div><h3>Servicios</h3><p>Profesionales y trabajadores</p></div>
-    <div class="card"><div class="emoji">💼</div><h3>Empleos</h3><p>Oportunidades laborales</p></div>
-    <div class="card"><div class="emoji">🏠</div><h3>Alquileres</h3><p>Casas y departamentos</p></div>
-    <div class="card"><div class="emoji">🛒</div><h3>Compra y venta</h3><p>Productos y publicaciones</p></div>
-    <div class="card"><div class="emoji">🚗</div><h3>Vehículos</h3><p>Autos y motos</p></div>
-  </div>
+ <h2>Explorá nuestras categorías</h2>
+ <div class="grid" id="categoriasGrid">
+  <a href="comercios.html" class="card"><div class="emoji">🏪</div><h3>Comercios</h3><p>Negocios de nuestra ciudad</p></a>
+  <a href="servicios.html" class="card"><div class="emoji">🔧</div><h3>Servicios</h3><p>Profesionales y trabajadores</p></a>
+  <a href="empleos.html" class="card"><div class="emoji">💼</div><h3>Empleos</h3><p>Ofertas y búsqueda laboral</p></a>
+  <a href="alquileres.html" class="card"><div class="emoji">🏠</div><h3>Alquileres</h3><p>Casas, departamentos y locales</p></a>
+  <a href="compra-venta.html" class="card"><div class="emoji">🛒</div><h3>Compra y venta</h3><p>Productos y oportunidades</p></a>
+  <a href="vehiculos.html" class="card"><div class="emoji">🚗</div><h3>Vehículos</h3><p>Autos, motos y más</p></a>
+ </div>
 </section>
-
-<section id="nosotros">
-  <div class="info">
-    <h2>Tu ciudad, más conectada</h2>
-    <p>Un espacio para impulsar los comercios,
-    emprendedores y oportunidades de Virasoro
-    y localidades cercanas.</p>
-    <a href="mailto:contacto@conectavirasoro.com">Contactanos</a>
-  </div>
-</section>
-
-<footer>
-  <p>© 2026 Conecta Virasoro</p>
-  <p>Conectando personas, negocios y oportunidades.</p>
-</footer>
-
-<script>
-function buscar(){
-  const valor=document.getElementById('busqueda').value.trim();
-  if(!valor){
-    alert('Escribí qué estás buscando');
-    return;
-  }
-  const tarjetas=document.querySelectorAll('.card');
-  let encontrados=0;
-  tarjetas.forEach(card=>{
-    const coincide=card.innerText.toLowerCase().includes(valor.toLowerCase());
-    card.style.display=coincide?'block':'none';
-    if(coincide) encontrados++;
-  });
-  if(!encontrados) alert('No encontramos esa categoría. ¡Pronto habrá más opciones!');
-}
-</script>
-<style>
-  #cv-publicar {
-    max-width: 650px;
-    margin: 35px auto;
-    padding: 24px;
-    background: #f5f7fa;
-    border-radius: 16px;
-    font-family: Arial, sans-serif;
-    color: #172033;
-  }
-  #cv-publicar h2 { text-align: center; }
-  #cv-publicar p { text-align: center; }
-  #cv-publicar label {
-    display: block;
-    margin-top: 14px;
-    font-weight: bold;
-  }
-  #cv-publicar input,
-  #cv-publicar select,
-  #cv-publicar textarea {
-    box-sizing: border-box;
-    width: 100%;
-    padding: 12px;
-    margin-top: 6px;
-    border: 1px solid #ccd2dc;
-    border-radius: 8px;
-    font-size: 16px;
-  }
-  #cv-publicar button {
-    width: 100%;
-    padding: 15px;
-    margin-top: 20px;
-    border: 0;
-    border-radius: 9px;
-    background: #16834a;
-    color: white;
-    font-size: 17px;
-    font-weight: bold;
-    cursor: pointer;
-  }
-</style>
-
-<section id="cv-publicar">
+<section id="publicar">
+ <div class="publish">
   <h2>📢 Publicá en Conecta Virasoro</h2>
-  <p>Tu aviso llega a toda la comunidad.</p>
-
-  <form id="cv-form">
-    <label>¿Qué querés publicar?</label>
-    <select id="cv-categoria" required>
-      <option value="">Elegí una categoría</option>
-      <option>Comercios</option>
-      <option>Servicios</option>
-      <option>Empleos</option>
-      <option>Alquileres</option>
-      <option>Compra y venta</option>
-      <option>Vehículos</option>
-    </select>
-
-    <label>Título del aviso</label>
-    <input id="cv-titulo" required placeholder="Ej.: Vendo bicicleta">
-
-    <label>Descripción</label>
-    <textarea id="cv-descripcion" required rows="4" placeholder="Contanos los detalles"></textarea>
-
-    <label>Precio (opcional)</label>
-    <input id="cv-precio" placeholder="Ej.: $150.000">
-
-    <label>Tu nombre</label>
-    <input id="cv-nombre" required placeholder="Nombre y apellido">
-
-    <label>Tu teléfono</label>
-    <input id="cv-telefono" required placeholder="Tu número de contacto">
-
-    <button type="submit">Enviar publicación por WhatsApp</button>
+  <p>Enviá tu propuesta gratis. Revisamos cada solicitud antes de publicarla.</p>
+  <form class="form" id="publicacionForm">
+   <div class="field"><label for="categoria">¿Qué querés publicar?</label><select id="categoria" required><option value="">Elegí una categoría</option><option>Comercios</option><option>Servicios</option><option>Empleos</option><option>Alquileres</option><option>Compra y venta</option><option>Vehículos</option></select></div>
+   <div class="field"><label for="titulo">Título del aviso *</label><input id="titulo" required placeholder="Ej.: Busco trabajo de atención al público"></div>
+   <div class="field full"><label for="descripcion">Descripción *</label><textarea id="descripcion" required placeholder="Contanos los detalles de tu publicación"></textarea></div>
+   <div class="field"><label for="precio">Precio (opcional)</label><input id="precio" placeholder="Ej.: $150.000 / A convenir"></div>
+   <div class="field"><label for="ubicacion">Zona o localidad</label><input id="ubicacion" placeholder="Ej.: Gobernador Virasoro"></div>
+   <div class="field"><label for="nombre">Tu nombre *</label><input id="nombre" required></div>
+   <div class="field"><label for="telefono">Tu WhatsApp *</label><input id="telefono" required type="tel" placeholder="Tu número de contacto"></div>
+   <div class="field full"><div class="note">🔒 La solicitud llega al equipo de Conecta Virasoro. No se publica automáticamente: primero verificamos los datos.</div></div>
+   <button type="submit">📲 Enviar publicación por WhatsApp</button>
   </form>
+ </div>
 </section>
-
+<section id="nosotros"><div class="info"><h2>Tu ciudad, más conectada</h2><p>Un espacio para impulsar los comercios, emprendedores, trabajadores y oportunidades de Virasoro y localidades cercanas.</p><a href="https://wa.me/5493758565118?text=Hola%20Conecta%20Virasoro%2C%20quiero%20hacer%20una%20consulta." target="_blank" rel="noopener">Contactar a Conecta Virasoro</a></div></section>
+</main>
+<footer><p>© 2026 Conecta Virasoro</p><p>Conectando personas, negocios y oportunidades.</p><p><a href="https://wa.me/5493758565118">WhatsApp de contacto</a></p></footer>
 <script>
-document.getElementById("cv-form").addEventListener("submit", function(e) {
-  e.preventDefault();
-
-  const mensaje =
-    "NUEVA PUBLICACIÓN - CONECTA VIRASORO\n\n" +
-    "Categoría: " + document.getElementById("cv-categoria").value + "\n" +
-    "Título: " + document.getElementById("cv-titulo").value + "\n" +
-    "Descripción: " + document.getElementById("cv-descripcion").value + "\n" +
-    "Precio: " + (document.getElementById("cv-precio").value || "A consultar") + "\n" +
-    "Nombre: " + document.getElementById("cv-nombre").value + "\n" +
-    "Teléfono: " + document.getElementById("cv-telefono").value;
-
-  const url = "https://wa.me/5493758565118?text=" + encodeURIComponent(mensaje);
-  window.open(url, "_blank");
-});
+function normalizar(t){return t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")}
+function buscar(){const q=normalizar(document.getElementById("busqueda").value.trim());const cards=[...document.querySelectorAll("#categoriasGrid .card")];cards.forEach(c=>c.style.display=!q||normalizar(c.innerText).includes(q)?"block":"none");if(q&&!cards.some(c=>c.style.display!=="none"))alert("No encontramos esa categoría. Probá con otra palabra.");document.getElementById("categorias").scrollIntoView({behavior:"smooth"});}
+document.getElementById("busqueda").addEventListener("keydown",e=>{if(e.key==="Enter")buscar()});
+document.getElementById("publicacionForm").addEventListener("submit",e=>{e.preventDefault();const ids=["categoria","titulo","descripcion","precio","ubicacion","nombre","telefono"];const labels=["Categoría","Título","Descripción","Precio","Zona o localidad","Nombre","WhatsApp"];const lines=ids.map((id,i)=>labels[i]+": "+(document.getElementById(id).value.trim()||"No informado"));const msg="NUEVA SOLICITUD - CONECTA VIRASORO\n\n"+lines.join("\n");window.open("https://wa.me/5493758565118?text="+encodeURIComponent(msg),"_blank","noopener");});
+if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}
 </script>
-
 </body>
 </html>
