@@ -114,7 +114,7 @@ document.getElementById("formPublicacion").addEventListener("submit",async e=>{
   avisoEstado.id="estadoEnvio";
   avisoEstado.setAttribute("role","status");
   avisoEstado.setAttribute("aria-live","polite");
-  avisoEstado.style.cssText="display:block;background:#e5f6f1;color:#145c48;border:2px solid #20b98b;border-radius:12px;padding:18px;margin:18px 0;font-weight:600;line-height:1.6;text-align:center;";
+  avisoEstado.style.cssText="display:block;position:sticky;top:12px;z-index:50;background:#e5f6f1;color:#145c48;border:2px solid #20b98b;border-radius:12px;padding:18px;margin:18px 0;font-weight:600;line-height:1.6;text-align:center;box-shadow:0 6px 20px #102b4620;"
   form.parentNode.insertBefore(avisoEstado,form);
  }
  avisoEstado.textContent="✅ ¡Muchas gracias por tu publicación! Recibimos tus datos correctamente. Nuestro equipo los revisará y, si todo está bien, aprobará el aviso para que aparezca en Conecta Virasoro. Por ahora, tu solicitud está pendiente de revisión.";
@@ -127,7 +127,7 @@ document.getElementById("formPublicacion").addEventListener("submit",async e=>{
   actualizarPreguntaServicio();
  }
  if(cfg.empleo){document.getElementById("modoEmpleo").hidden=false;document.getElementById("modoEmpleoSelect").required=true;}
- avisoEstado.scrollIntoView({behavior:"smooth",block:"center"});
+ avisoEstado.scrollIntoView({behavior:"smooth",block:"start"});
 });
 
 cargarPublicaciones();
