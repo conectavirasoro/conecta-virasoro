@@ -10,7 +10,7 @@ function norm(t){return String(t||"").toLowerCase().normalize("NFD").replace(/[\
 function render(lista){const el=document.getElementById("listado");if(!lista.length){el.innerHTML='<div class="empty"><h2>🔎 Todavía no hay publicaciones aprobadas</h2><p>Estamos sumando propuestas de la comunidad. ¿Querés ser de los primeros en publicar?</p><a class="btn" href="#publicar">Enviar mi publicación</a></div>';return}el.innerHTML=lista.map(x=>'<article class="item"><span class="tag">'+x.tipo+'</span><h3>'+x.titulo+'</h3><p>'+x.descripcion+'</p><p>📍 '+x.ubicacion+'</p><div class="actions"><a href="https://wa.me/'+x.telefono+'" target="_blank" rel="noopener">💬 Contactar</a></div></article>').join("")}
 function filtrar(){const q=norm(document.getElementById("busqueda").value);render(listado.filter(x=>norm([x.titulo,x.descripcion,x.tipo,x.ubicacion].join(" ")).includes(q)))}
 document.getElementById("busqueda").addEventListener("keydown",e=>{if(e.key==="Enter")filtrar()});
-document.getElementById("categorias").innerHTML=cfg.categorias.map(c=>'<option>'+c+'</option>').join("");
+document.getElementById("tipo").innerHTML=cfg.categorias.map(c=>'<option>'+c+'</option>').join("");
 document.getElementById("campoTituloLabel").textContent=cfg.pregunta;
 document.getElementById("titulo").placeholder=cfg.ejemplo;
 if(cfg.empleo){document.getElementById("modoEmpleo").hidden=false;document.getElementById("modoEmpleoSelect").required=true}
