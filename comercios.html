@@ -443,10 +443,15 @@ footer{
  <p>Conectando personas y negocios.</p>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 
+const SUPABASE_URL="https://gxcutobwmwdbsfwjgcqr.supabase.co";
+const SUPABASE_KEY="sb_publishable_xy9wfM2qYKi8qbdMDAY3dQ_mgTZLuSR";
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
 // COMERCIOS APROBADOS Y PUBLICADOS
-const comercios = [
+let comercios = [
 
  {
   nombre:"MerLIa",
@@ -504,26 +509,10 @@ function mostrarComercios(lista){
      </div>
 
      <div class="redes">
-      <a class="boton whatsapp"
-       href="https://wa.me/${comercio.telefono}"
-       target="_blank"
-       rel="noopener noreferrer">
-       💬 WhatsApp
-      </a>
-
-      <a class="boton instagram"
-       href="${comercio.instagram}"
-       target="_blank"
-       rel="noopener noreferrer">
-       📸 Instagram
-      </a>
-
-      <a class="boton facebook"
-       href="${comercio.facebook}"
-       target="_blank"
-       rel="noopener noreferrer">
-       📘 Facebook
-      </a>
+      ${comercio.telefono ? `<a class="boton whatsapp" href="https://wa.me/${comercio.telefono}" target="_blank" rel="noopener noreferrer">💬 WhatsApp</a>` : ""}
+      ${comercio.instagram ? `<a class="boton instagram" href="${comercio.instagram}" target="_blank" rel="noopener noreferrer">📸 Instagram</a>` : ""}
+      ${comercio.facebook ? `<a class="boton facebook" href="${comercio.facebook}" target="_blank" rel="noopener noreferrer">📘 Facebook</a>` : ""}
+      ${comercio.web ? `<a class="boton" href="${comercio.web}" target="_blank" rel="noopener noreferrer">🔗 Web / redes</a>` : ""}
      </div>
     </article>
    `).join("")}
@@ -588,10 +577,12 @@ function limpiarBusqueda(){
 }
 
 // Formulario de inscripción por WhatsApp
-function enviarSolicitud(event){
-
+async function enviarSolicitud(event){
  event.preventDefault();
-
+ const form=event.currentTarget;
+ const boton=form.querySelector('button[type="submit"]');
+ const textoOriginal=boton.textContent;
+ boton.disabled=true;boton.textContent="Enviando solicitud...";
  const nombre=document.getElementById("nombre").value.trim();
  const rubro=document.getElementById("rubro").value;
  const descripcion=document.getElementById("descripcion").value.trim();
@@ -602,30 +593,50 @@ function enviarSolicitud(event){
  const tiktok=document.getElementById("tiktok").value.trim();
  const web=document.getElementById("web").value.trim();
  const foto=document.getElementById("foto").value.trim();
+ const redes=[instagram,facebook,tiktok,web].filter(Boolean);
+ const detalle=descripcion+"\n\n"+[
+  instagram?"Instagram: "+instagram:"",
+  facebook?"Facebook: "+facebook:"",
+  tiktok?"TikTok: "+tiktok:"",
+  web?"Web: "+web:""
+ ].filter(Boolean).join("\n");
+ const {error}=await db.from("publicaciones").insert({
+  categoria:"comercios",
+  tipo_aviso:rubro,
+  titulo:nombre,
+  descripcion:detalle,
+  zona:direccion,
+  contacto:nombre+" | "+telefono,
+  redes_url:redes[0]||null,
+  imagen_url:foto||null,
+  estado:"pendiente"
+ });
+ boton.disabled=false;boton.textContent=textoOriginal;
+ if(error){console.error(error);alert("No pudimos guardar la solicitud. Intentá nuevamente o escribinos por WhatsApp.");return;}
+ form.reset();
+ let estado=document.getElementById("estadoInscripcion");
+ if(!estado){estado=document.createElement("p");estado.id="estadoInscripcion";estado.className="nota";form.prepend(estado);}
+ estado.textContent="✅ ¡Solicitud recibida! Tu comercio quedó pendiente de revisión y aprobación. Todavía no aparece publicado.";
+ estado.scrollIntoView({behavior:"smooth",block:"center"});
+}
 
- const mensaje=
-`¡Hola! Quiero solicitar la publicación de mi comercio en Conecta Virasoro.
-
-NOMBRE: ${nombre}
-RUBRO: ${rubro}
-DESCRIPCIÓN: ${descripcion}
-DIRECCIÓN: ${direccion}
-WHATSAPP/TELÉFONO: ${telefono}
-
-INSTAGRAM: ${instagram || "No informado"}
-FACEBOOK: ${facebook || "No informado"}
-TIKTOK: ${tiktok || "No informado"}
-PÁGINA WEB: ${web || "No informado"}
-FOTO O LOGO: ${foto || "No informado"}
-
-Solicito la revisión y aprobación de mi comercio. ¡Gracias!`;
-
- const numero="5493758565118";
-
- const enlace="https://wa.me/"+numero+
-  "?text="+encodeURIComponent(mensaje);
-
- window.location.href=enlace;
+async function cargarComerciosAprobados(){
+ const {data,error}=await db.from("publicaciones").select("id,titulo,tipo_aviso,descripcion,zona,contacto,redes_url").eq("categoria","comercios").eq("estado","aprobada").order("created_at",{ascending:false});
+ if(error){console.error("No se pudieron cargar comercios aprobados:",error);return;}
+ const existentes=new Set(comercios.map(c=>c.nombre.toLowerCase()));
+ (data||[]).forEach(x=>{
+  const contacto=String(x.contacto||"").split("|");
+  const telefono=contacto.slice(1).join("|").replace(/\D/g,"");
+  const redes=String(x.redes_url||"").trim();
+  const redesDetalle=String(x.descripcion||"");
+  const instagram=(redesDetalle.match(/Instagram:\s*(https?:\/\/[^\s]+)/i)||[])[1]||"";
+  const facebook=(redesDetalle.match(/Facebook:\s*(https?:\/\/[^\s]+)/i)||[])[1]||"";
+  const web=(redesDetalle.match(/(?:Web|TikTok):\s*(https?:\/\/[^\s]+)/i)||[])[1]||redes;
+  if(existentes.has(String(x.titulo||"").toLowerCase()))return;
+  comercios.push({nombre:x.titulo,rubro:x.tipo_aviso||"Otros",descripcion:redesDetalle.split("\n\n")[0],ubicacion:x.zona||"Gobernador Virasoro",telefono,instagram,facebook,web,emoji:"🏪"});
+  existentes.add(String(x.titulo||"").toLowerCase());
+ });
+ mostrarComercios(comercios);
 }
 
 // Mostrar MerLIa al abrir la página
