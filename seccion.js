@@ -47,7 +47,20 @@ document.getElementById("busqueda").addEventListener("keydown",e=>{if(e.key==="E
 document.getElementById("tipo").innerHTML=cfg.categorias.map(c=>'<option value="'+escapar(c)+'">'+escapar(c)+'</option>').join("");
 document.getElementById("campoTituloLabel").textContent=cfg.pregunta;
 document.getElementById("titulo").placeholder=cfg.ejemplo;
+if(clave==="servicios"){
+ document.getElementById("modoServicio").hidden=false;
+ document.getElementById("modoServicioSelect").required=true;
+}
 if(cfg.empleo){document.getElementById("modoEmpleo").hidden=false;document.getElementById("modoEmpleoSelect").required=true;}
+const modoServicioSelect=document.getElementById("modoServicioSelect");
+function actualizarPreguntaServicio(){
+ if(clave!=="servicios")return;
+ const modoServicio=modoServicioSelect.value;
+ const buscando=modoServicio==="Busco un servicio";
+ document.getElementById("campoTituloLabel").textContent=buscando?"¿Qué servicio necesitás? *":"¿Qué servicio ofrecés? *";
+ document.getElementById("titulo").placeholder=buscando?"Ej.: Necesito un electricista para reparar una instalación":"Ej.: Electricista, plomero o peluquera";
+}
+modoServicioSelect?.addEventListener("change",actualizarPreguntaServicio);
 
 async function cargarPublicaciones(){
  const el=document.getElementById("listado");
@@ -71,8 +84,10 @@ document.getElementById("formPublicacion").addEventListener("submit",async e=>{
  const nombre=document.getElementById("nombre").value.trim();
  const telefono=document.getElementById("telefono").value.trim();
  const modo=document.getElementById("modoEmpleoSelect")?.value||"";
+ const modoServicio=document.getElementById("modoServicioSelect")?.value||"";
  const tipo=document.getElementById("tipo").value;
- const aviso=modo ? modo+" · "+tipo : tipo;
+ const modalidad=clave==="servicios"?modoServicio:modo;
+ const aviso=modalidad ? modalidad+" · "+tipo : tipo;
  const registro={
   categoria:clave,
   tipo_aviso:aviso,
@@ -106,6 +121,11 @@ document.getElementById("formPublicacion").addEventListener("submit",async e=>{
  avisoEstado.hidden=false;
  form.reset();
  document.getElementById("tipo").innerHTML=cfg.categorias.map(c=>'<option value="'+escapar(c)+'">'+escapar(c)+'</option>').join("");
+ if(clave==="servicios"){
+  document.getElementById("modoServicio").hidden=false;
+  document.getElementById("modoServicioSelect").required=true;
+  actualizarPreguntaServicio();
+ }
  if(cfg.empleo){document.getElementById("modoEmpleo").hidden=false;document.getElementById("modoEmpleoSelect").required=true;}
  avisoEstado.scrollIntoView({behavior:"smooth",block:"center"});
 });
