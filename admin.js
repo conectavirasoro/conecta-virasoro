@@ -6,8 +6,10 @@ const dashboard=document.getElementById("dashboard");
 const loginMessage=document.getElementById("loginMessage");
 const dashboardMessage=document.getElementById("dashboardMessage");
 const publicationList=document.getElementById("publicationList");
+const searchInput=document.getElementById("searchPublications");
 let publicaciones=[];
 let filtro="pendiente";
+let busqueda="";
 
 function escapeHtml(value){
  return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -18,17 +20,10 @@ function mensaje(el,texto,error=false){
  el.hidden=false;
 }
 function ocultarMensaje(el){el.hidden=true;el.textContent="";}
-function mostrarLogin(){
- dashboard.hidden=true;
- loginPanel.hidden=false;
-}
-function mostrarPanel(){
- loginPanel.hidden=true;
- dashboard.hidden=false;
-}
-function esAdministrador(user){
- return user?.app_metadata?.role==="admin";
-}
+function mostrarLogin(){dashboard.hidden=true;loginPanel.hidden=false;}
+function mostrarPanel(){loginPanel.hidden=true;dashboard.hidden=false;}
+function esAdministrador(user){return user?.app_metadata?.role==="admin";}
+
 async function verificarSesion(){
  const {data,error}=await db.auth.getSession();
  if(error||!data.session){mostrarLogin();return;}
@@ -42,6 +37,7 @@ async function verificarSesion(){
  mostrarPanel();
  await cargarPublicaciones();
 }
+
 document.getElementById("loginForm").addEventListener("submit",async e=>{
  e.preventDefault();
  const button=document.getElementById("loginButton");
@@ -54,18 +50,27 @@ document.getElementById("loginForm").addEventListener("submit",async e=>{
  if(error){mensaje(loginMessage,"No pudimos iniciar sesión. Revisá el correo y la contraseña.",true);return;}
  if(!esAdministrador(data.user)){
   await db.auth.signOut();
-  mensaje(loginMessage,"La cuenta ingresada no tiene permisos administrativos.",true);
+  mensaje(loginMessage,"La cuenta ingresada no tiene permisos de administración.",true);
   return;
  }
  mostrarPanel();
  await cargarPublicaciones();
 });
+
 document.getElementById("logoutButton").addEventListener("click",async()=>{
  await db.auth.signOut();
  publicaciones=[];
  mostrarLogin();
  document.getElementById("password").value="";
 });
+
+function actualizarEstadisticas(){
+ document.getElementById("countPending").textContent=publicaciones.filter(p=>p.estado==="pendiente").length;
+ document.getElementById("countApproved").textContent=publicaciones.filter(p=>p.estado==="aprobada").length;
+ document.getElementById("countRejected").textContent=publicaciones.filter(p=>p.estado==="rechazada").length;
+ document.getElementById("countTotal").textContent=publicaciones.length;
+}
+
 async function cargarPublicaciones(){
  publicationList.innerHTML='<div class="empty">⏳ Cargando publicaciones...</div>';
  ocultarMensaje(dashboardMessage);
@@ -76,11 +81,21 @@ async function cargarPublicaciones(){
   return;
  }
  publicaciones=data||[];
+ actualizarEstadisticas();
  renderPublicaciones();
 }
+
 function renderPublicaciones(){
- const lista=filtro==="todas"?publicaciones:publicaciones.filter(p=>p.estado===filtro);
- if(!lista.length){publicationList.innerHTML='<div class="empty">No hay publicaciones en esta categoría.</div>';return;}
+ const termino=busqueda.trim().toLocaleLowerCase("es");
+ const lista=publicaciones.filter(p=>{
+  const coincideEstado=filtro==="todas"||p.estado===filtro;
+  const texto=[p.titulo,p.descripcion,p.categoria,p.tipo_aviso,p.zona,p.precio,p.contacto].join(" ").toLocaleLowerCase("es");
+  return coincideEstado&&(!termino||texto.includes(termino));
+ });
+ if(!lista.length){
+  publicationList.innerHTML='<div class="empty">'+(busqueda?'No encontramos publicaciones con esa búsqueda.':'No hay publicaciones en esta categoría.')+'</div>';
+  return;
+ }
  publicationList.innerHTML=lista.map(p=>{
   const contacto=String(p.contacto||"").split("|");
   const nombre=contacto[0]?.trim()||"Sin nombre";
@@ -91,11 +106,18 @@ function renderPublicaciones(){
   return '<article class="publication"><span class="tag">'+escapeHtml(p.estado)+'</span><h3>'+escapeHtml(p.titulo)+'</h3><p>'+escapeHtml(p.descripcion)+'</p><div class="meta"><strong>Sección:</strong> '+escapeHtml(p.categoria)+' · <strong>Tipo:</strong> '+escapeHtml(p.tipo_aviso||"Sin especificar")+'<br><strong>Zona:</strong> '+escapeHtml(p.zona||"No indicada")+' · <strong>Precio:</strong> '+escapeHtml(p.precio||"No indicado")+'<br><strong>Contacto:</strong> '+escapeHtml(nombre)+' · '+escapeHtml(telefono)+'<br><strong>Recibida:</strong> '+escapeHtml(fecha)+(p.redes_url?'<br><strong>Enlace:</strong> <a target="_blank" rel="noopener" href="'+escapeHtml(p.redes_url)+'">Abrir enlace</a>':"")+'</div><div class="actions">'+enlaceWhatsapp+(p.estado!=="aprobada"?'<button class="primary" data-action="aprobar" data-id="'+p.id+'">✓ Aprobar</button>':"")+(p.estado!=="rechazada"?'<button class="secondary" data-action="rechazar" data-id="'+p.id+'">Rechazar</button>':"")+'<button class="danger" data-action="eliminar" data-id="'+p.id+'">Eliminar</button></div></article>';
  }).join("");
 }
+
+searchInput.addEventListener("input",()=>{
+ busqueda=searchInput.value;
+ renderPublicaciones();
+});
+
 document.querySelectorAll("[data-filter]").forEach(button=>button.addEventListener("click",()=>{
  filtro=button.dataset.filter;
  document.querySelectorAll("[data-filter]").forEach(b=>b.classList.toggle("active",b===button));
  renderPublicaciones();
 }));
+
 publicationList.addEventListener("click",async e=>{
  const button=e.target.closest("button[data-action]");
  if(!button)return;
@@ -117,8 +139,7 @@ publicationList.addEventListener("click",async e=>{
  mensaje(dashboardMessage,accion==="aprobar"?"Publicación aprobada y visible en el sitio.":accion==="rechazar"?"Publicación rechazada.":"Publicación eliminada.");
  await cargarPublicaciones();
 });
+
 document.getElementById("refreshButton").addEventListener("click",cargarPublicaciones);
-db.auth.onAuthStateChange((_event,session)=>{
- if(!session){mostrarLogin();}
-});
+db.auth.onAuthStateChange((_event,session)=>{if(!session)mostrarLogin();});
 verificarSesion();
