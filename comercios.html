@@ -1,0 +1,181 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comercios | Conecta Virasoro</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;
+ font-family:Arial,sans-serif;
+ background:#f4f6fa;
+ color:#17243a;
+}
+header{
+ background:#102b46;
+ color:white;
+ padding:22px 7%;
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ flex-wrap:wrap;
+}
+.logo{font-size:23px;font-weight:bold}
+.logo span{color:#36d6a0}
+header a{color:white;text-decoration:none}
+.hero{
+ background:linear-gradient(120deg,#102b46,#176b79);
+ color:white;
+ text-align:center;
+ padding:55px 20px;
+}
+.hero h1{font-size:34px}
+.hero p{font-size:17px}
+.search{
+ max-width:520px;
+ margin:25px auto 0;
+ display:flex;
+ background:white;
+ padding:7px;
+ border-radius:9px;
+}
+.search input{
+ flex:1;
+ min-width:0;
+ padding:12px;
+ border:0;
+ outline:none;
+ font-size:15px;
+}
+.search button{
+ background:#20b98b;
+ color:white;
+ border:0;
+ padding:12px 18px;
+ border-radius:7px;
+ cursor:pointer;
+}
+section{padding:40px 7%}
+h2{text-align:center}
+.grid{
+ display:grid;
+ grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+ gap:17px;
+}
+.card{
+ background:white;
+ border-radius:12px;
+ padding:22px 12px;
+ text-align:center;
+ box-shadow:0 3px 14px #0000000d;
+ cursor:pointer;
+}
+.card .emoji{font-size:34px}
+.card h3{margin:10px 0 5px}
+.card p{font-size:13px;color:#667085}
+.card:hover{transform:translateY(-3px)}
+#resultados{margin-top:30px}
+.aviso{
+ background:white;
+ padding:25px;
+ border-radius:12px;
+ text-align:center;
+}
+.boton{
+ display:inline-block;
+ background:#20b98b;
+ color:white;
+ text-decoration:none;
+ padding:13px 20px;
+ border-radius:8px;
+ margin-top:12px;
+}
+footer{
+ background:#102b46;
+ color:white;
+ text-align:center;
+ padding:25px;
+}
+</style>
+</head>
+<body>
+
+<header>
+ <div class="logo">Conecta <span>Virasoro</span></div>
+ <a href="index.html">← Volver al inicio</a>
+</header>
+
+<div class="hero">
+ <h1>🏪 Comercios de Virasoro</h1>
+ <p>Encontrá los negocios de nuestra ciudad en un solo lugar.</p>
+ <div class="search">
+  <input id="busqueda" placeholder="Buscar un comercio o rubro...">
+  <button onclick="buscar()">Buscar</button>
+ </div>
+</div>
+
+<section>
+ <h2>Explorá por rubro</h2>
+ <div class="grid" id="rubros">
+  <div class="card" onclick="filtrar('Almacenes')">
+   <div class="emoji">🛒</div><h3>Almacenes</h3>
+   <p>Alimentos y bebidas</p>
+  </div>
+  <div class="card" onclick="filtrar('Indumentaria')">
+   <div class="emoji">👕</div><h3>Indumentaria</h3>
+   <p>Ropa y calzado</p>
+  </div>
+  <div class="card" onclick="filtrar('Gastronomía')">
+   <div class="emoji">🍕</div><h3>Gastronomía</h3>
+   <p>Restaurantes y comidas</p>
+  </div>
+  <div class="card" onclick="filtrar('Ferreterías')">
+   <div class="emoji">🔧</div><h3>Ferreterías</h3>
+   <p>Herramientas y materiales</p>
+  </div>
+  <div class="card" onclick="filtrar('Tecnología')">
+   <div class="emoji">📱</div><h3>Tecnología</h3>
+   <p>Celulares y electrónica</p>
+  </div>
+  <div class="card" onclick="filtrar('Otros')">
+   <div class="emoji">🏬</div><h3>Otros rubros</h3>
+   <p>Más comercios</p>
+  </div>
+ </div>
+
+ <div id="resultados">
+  <div class="aviso">
+   <h2>¡Tu negocio puede estar acá!</h2>
+   <p>Estamos construyendo el directorio comercial de Virasoro.</p>
+   <p>Muy pronto vas a poder encontrar los comercios de nuestra ciudad.</p>
+   <a class="boton" href="https://wa.me/5493758565118?text=Hola%2C%20quiero%20publicar%20mi%20comercio%20en%20Conecta%20Virasoro">
+    Publicar mi comercio
+   </a>
+  </div>
+ </div>
+</section>
+
+<footer>
+ <p>© 2026 Conecta Virasoro</p>
+ <p>Conectando personas y negocios.</p>
+</footer>
+
+<script>
+function filtrar(rubro){
+ document.getElementById('busqueda').value=rubro;
+ buscar();
+}
+function buscar(){
+ const valor=document.getElementById('busqueda').value.trim();
+ if(!valor){
+  alert('Escribí qué comercio estás buscando');
+  return;
+ }
+ alert('Estamos preparando el directorio de comercios. ¡Pronto habrá más negocios disponibles!');
+}
+</script>
+
+</body>
+</html>
