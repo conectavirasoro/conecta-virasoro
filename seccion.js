@@ -5,15 +5,106 @@ alquileres:{titulo:"Alquileres",emoji:"🏠",subtitulo:"Casas, departamentos, ha
 "compra-venta":{titulo:"Compra y venta",emoji:"🛒",subtitulo:"Publicá productos nuevos o usados y encontrá oportunidades cerca tuyo.",categorias:["Hogar","Electrodomésticos","Muebles","Ropa y calzado","Herramientas","Tecnología","Otros"],pregunta:"¿Qué producto ofrecés?",ejemplo:"Ej.: Vendo bicicleta en buen estado"},
 vehiculos:{titulo:"Vehículos",emoji:"🚗",subtitulo:"Autos, motos, camionetas y otros vehículos.",categorias:["Autos","Motos","Camionetas","Camiones","Maquinaria","Repuestos","Otros"],pregunta:"¿Qué vehículo o producto ofrecés?",ejemplo:"Ej.: Vendo moto 150 cc"}
 };
-const clave=document.body.dataset.seccion;const cfg=secciones[clave];const listado=[];
+
+const SUPABASE_URL="https://gxcutobwmwdbsfwjgcqr.supabase.co";
+const SUPABASE_KEY="sb_publishable_xy9wfM2qYKi8qbdMDAY3dQ_mgTZLuSR";
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const clave=document.body.dataset.seccion;
+const cfg=secciones[clave];
+let listado=[];
+
 function norm(t){return String(t||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")}
-function render(lista){const el=document.getElementById("listado");if(!lista.length){el.innerHTML='<div class="empty"><h2>🔎 Todavía no hay publicaciones aprobadas</h2><p>Estamos sumando propuestas de la comunidad. ¿Querés ser de los primeros en publicar?</p><a class="btn" href="#publicar">Enviar mi publicación</a></div>';return}el.innerHTML=lista.map(x=>'<article class="item"><span class="tag">'+x.tipo+'</span><h3>'+x.titulo+'</h3><p>'+x.descripcion+'</p><p>📍 '+x.ubicacion+'</p><div class="actions"><a href="https://wa.me/'+x.telefono+'" target="_blank" rel="noopener">💬 Contactar</a></div></article>').join("")}
-function filtrar(){const q=norm(document.getElementById("busqueda").value);render(listado.filter(x=>norm([x.titulo,x.descripcion,x.tipo,x.ubicacion].join(" ")).includes(q)))}
+function escapar(t){return String(t??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function normalizarTelefono(t){
+ let n=String(t||"").replace(/\D/g,"");
+ if(n.startsWith("00"))n=n.slice(2);
+ if(n.startsWith("0"))n=n.slice(1);
+ if(n && !n.startsWith("54") && n.length<=10)n="549"+n;
+ return n;
+}
+function render(lista){
+ const el=document.getElementById("listado");
+ if(!lista.length){
+  el.innerHTML='<div class="empty"><h2>🔎 Todavía no hay publicaciones aprobadas</h2><p>Estamos sumando propuestas de la comunidad. ¿Querés ser de los primeros en publicar?</p><a class="btn" href="#publicar">Enviar mi publicación</a></div>';
+  return;
+ }
+ el.innerHTML=lista.map(x=>{
+  const contacto=String(x.contacto||"");
+  const partes=contacto.split("|");
+  const nombre=partes[0].trim();
+  const telefono=normalizarTelefono(partes.slice(1).join("|").trim());
+  const enlace=telefono ? '<a href="https://wa.me/'+escapar(telefono)+'" target="_blank" rel="noopener noreferrer">💬 Contactar por WhatsApp</a>' : "";
+  const redes=String(x.redes_url||"").trim();
+  const enlaceRedes=/^https?:\/\//i.test(redes) ? '<a href="'+escapar(redes)+'" target="_blank" rel="noopener noreferrer">🔗 Más información</a>' : "";
+  return '<article class="item"><span class="tag">'+escapar(x.tipo_aviso||cfg.titulo)+'</span><h3>'+escapar(x.titulo)+'</h3><p>'+escapar(x.descripcion)+'</p>'+(x.zona?'<p>📍 '+escapar(x.zona)+'</p>':"")+(x.precio?'<p><strong>Precio / remuneración:</strong> '+escapar(x.precio)+'</p>':"")+(nombre?'<p><small>Contacto: '+escapar(nombre)+'</small></p>':"")+'<div class="actions">'+enlace+' '+enlaceRedes+'</div></article>';
+ }).join("");
+}
+function filtrar(){
+ const q=norm(document.getElementById("busqueda").value);
+ render(listado.filter(x=>norm([x.titulo,x.descripcion,x.tipo_aviso,x.zona,x.precio].join(" ")).includes(q)));
+}
 document.getElementById("busqueda").addEventListener("keydown",e=>{if(e.key==="Enter")filtrar()});
-document.getElementById("tipo").innerHTML=cfg.categorias.map(c=>'<option>'+c+'</option>').join("");
+document.getElementById("tipo").innerHTML=cfg.categorias.map(c=>'<option value="'+escapar(c)+'">'+escapar(c)+'</option>').join("");
 document.getElementById("campoTituloLabel").textContent=cfg.pregunta;
 document.getElementById("titulo").placeholder=cfg.ejemplo;
-if(cfg.empleo){document.getElementById("modoEmpleo").hidden=false;document.getElementById("modoEmpleoSelect").required=true}
-document.getElementById("formPublicacion").addEventListener("submit",e=>{e.preventDefault();const ids=["tipo","titulo","descripcion","ubicacion","precio","nombre","telefono","redes"];const labels=["Categoría","Título","Descripción","Ubicación","Precio o remuneración","Nombre de contacto","WhatsApp","Redes o enlace"];let msg="SOLICITUD PARA "+cfg.titulo.toUpperCase()+" - CONECTA VIRASORO\n\n";ids.forEach((id,i)=>{const v=document.getElementById(id)?.value.trim();if(v)msg+=labels[i]+": "+v+"\n"});const modo=document.getElementById("modoEmpleoSelect")?.value;if(modo)msg+="Tipo de aviso: "+modo+"\n";msg+="\nSolicito revisión y aprobación antes de publicar.";window.open("https://wa.me/5493758565118?text="+encodeURIComponent(msg),"_blank","noopener")});
-render(listado);
+if(cfg.empleo){document.getElementById("modoEmpleo").hidden=false;document.getElementById("modoEmpleoSelect").required=true;}
+
+async function cargarPublicaciones(){
+ const el=document.getElementById("listado");
+ el.innerHTML='<div class="empty"><p>⏳ Cargando publicaciones...</p></div>';
+ const {data,error}=await db.from("publicaciones").select("id,categoria,tipo_aviso,titulo,descripcion,zona,precio,contacto,redes_url,created_at").eq("estado","aprobada").eq("categoria",clave).order("created_at",{ascending:false});
+ if(error){
+  console.error("No se pudieron cargar las publicaciones:",error);
+  el.innerHTML='<div class="empty"><h2>No pudimos cargar los avisos</h2><p>Probá recargar la página dentro de unos minutos.</p></div>';
+  return;
+ }
+ listado=data||[];
+ filtrar();
+}
+
+document.getElementById("formPublicacion").addEventListener("submit",async e=>{
+ e.preventDefault();
+ const boton=e.currentTarget.querySelector('button[type="submit"]');
+ const textoOriginal=boton.textContent;
+ boton.disabled=true;
+ boton.textContent="Enviando solicitud...";
+ const nombre=document.getElementById("nombre").value.trim();
+ const telefono=document.getElementById("telefono").value.trim();
+ const modo=document.getElementById("modoEmpleoSelect")?.value||"";
+ const tipo=document.getElementById("tipo").value;
+ const aviso=modo ? modo+" · "+tipo : tipo;
+ const registro={
+  categoria:clave,
+  tipo_aviso:aviso,
+  titulo:document.getElementById("titulo").value.trim(),
+  descripcion:document.getElementById("descripcion").value.trim(),
+  zona:document.getElementById("ubicacion").value.trim(),
+  precio:document.getElementById("precio").value.trim()||null,
+  contacto:nombre+" | "+telefono,
+  redes_url:document.getElementById("redes").value.trim()||null,
+  estado:"pendiente"
+ };
+ const {error}=await db.from("publicaciones").insert(registro);
+ boton.disabled=false;
+ boton.textContent=textoOriginal;
+ if(error){
+  console.error("Error al guardar la solicitud:",error);
+  alert("No pudimos guardar tu solicitud. Revisá tu conexión e intentá nuevamente. Si el problema continúa, contactá a Conecta Virasoro por WhatsApp.");
+  return;
+ }
+ e.currentTarget.reset();
+ document.getElementById("tipo").innerHTML=cfg.categorias.map(c=>'<option value="'+escapar(c)+'">'+escapar(c)+'</option>').join("");
+ if(cfg.empleo){document.getElementById("modoEmpleo").hidden=false;document.getElementById("modoEmpleoSelect").required=true;}
+ let avisoEstado=document.getElementById("estadoEnvio");
+ if(!avisoEstado){
+  avisoEstado=document.createElement("p");
+  avisoEstado.id="estadoEnvio";
+  avisoEstado.className="note";
+  e.currentTarget.prepend(avisoEstado);
+ }
+ avisoEstado.textContent="✅ ¡Solicitud recibida! Quedó pendiente de revisión y aprobación. Todavía no aparece publicada.";
+ avisoEstado.scrollIntoView({behavior:"smooth",block:"center"});
+});
+
+cargarPublicaciones();
 if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}
