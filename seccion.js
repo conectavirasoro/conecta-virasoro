@@ -92,17 +92,21 @@ document.getElementById("formPublicacion").addEventListener("submit",async e=>{
   alert("No pudimos guardar tu solicitud. Revisá tu conexión e intentá nuevamente. Si el problema continúa, contactá a Conecta Virasoro por WhatsApp.");
   return;
  }
- e.currentTarget.reset();
- document.getElementById("tipo").innerHTML=cfg.categorias.map(c=>'<option value="'+escapar(c)+'">'+escapar(c)+'</option>').join("");
- if(cfg.empleo){document.getElementById("modoEmpleo").hidden=false;document.getElementById("modoEmpleoSelect").required=true;}
+ const form=e.currentTarget;
  let avisoEstado=document.getElementById("estadoEnvio");
  if(!avisoEstado){
-  avisoEstado=document.createElement("p");
+  avisoEstado=document.createElement("div");
   avisoEstado.id="estadoEnvio";
-  avisoEstado.className="note";
-  e.currentTarget.prepend(avisoEstado);
+  avisoEstado.setAttribute("role","status");
+  avisoEstado.setAttribute("aria-live","polite");
+  avisoEstado.style.cssText="display:block;background:#e5f6f1;color:#145c48;border:2px solid #20b98b;border-radius:12px;padding:18px;margin:18px 0;font-weight:600;line-height:1.6;text-align:center;";
+  form.parentNode.insertBefore(avisoEstado,form);
  }
- avisoEstado.textContent="✅ ¡Solicitud recibida! Quedó pendiente de revisión y aprobación. Todavía no aparece publicada.";
+ avisoEstado.textContent="✅ ¡Muchas gracias por tu publicación! Recibimos tus datos correctamente. Nuestro equipo los revisará y, si todo está bien, aprobará el aviso para que aparezca en Conecta Virasoro. Por ahora, tu solicitud está pendiente de revisión.";
+ avisoEstado.hidden=false;
+ form.reset();
+ document.getElementById("tipo").innerHTML=cfg.categorias.map(c=>'<option value="'+escapar(c)+'">'+escapar(c)+'</option>').join("");
+ if(cfg.empleo){document.getElementById("modoEmpleo").hidden=false;document.getElementById("modoEmpleoSelect").required=true;}
  avisoEstado.scrollIntoView({behavior:"smooth",block:"center"});
 });
 
