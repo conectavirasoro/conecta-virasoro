@@ -165,6 +165,100 @@ function buscar(){
   if(!encontrados) alert('No encontramos esa categoría. ¡Pronto habrá más opciones!');
 }
 </script>
+<style>
+  #cv-publicar {
+    max-width: 650px;
+    margin: 35px auto;
+    padding: 24px;
+    background: #f5f7fa;
+    border-radius: 16px;
+    font-family: Arial, sans-serif;
+    color: #172033;
+  }
+  #cv-publicar h2 { text-align: center; }
+  #cv-publicar p { text-align: center; }
+  #cv-publicar label {
+    display: block;
+    margin-top: 14px;
+    font-weight: bold;
+  }
+  #cv-publicar input,
+  #cv-publicar select,
+  #cv-publicar textarea {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 12px;
+    margin-top: 6px;
+    border: 1px solid #ccd2dc;
+    border-radius: 8px;
+    font-size: 16px;
+  }
+  #cv-publicar button {
+    width: 100%;
+    padding: 15px;
+    margin-top: 20px;
+    border: 0;
+    border-radius: 9px;
+    background: #16834a;
+    color: white;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+</style>
+
+<section id="cv-publicar">
+  <h2>📢 Publicá en Conecta Virasoro</h2>
+  <p>Tu aviso llega a toda la comunidad.</p>
+
+  <form id="cv-form">
+    <label>¿Qué querés publicar?</label>
+    <select id="cv-categoria" required>
+      <option value="">Elegí una categoría</option>
+      <option>Comercios</option>
+      <option>Servicios</option>
+      <option>Empleos</option>
+      <option>Alquileres</option>
+      <option>Compra y venta</option>
+      <option>Vehículos</option>
+    </select>
+
+    <label>Título del aviso</label>
+    <input id="cv-titulo" required placeholder="Ej.: Vendo bicicleta">
+
+    <label>Descripción</label>
+    <textarea id="cv-descripcion" required rows="4" placeholder="Contanos los detalles"></textarea>
+
+    <label>Precio (opcional)</label>
+    <input id="cv-precio" placeholder="Ej.: $150.000">
+
+    <label>Tu nombre</label>
+    <input id="cv-nombre" required placeholder="Nombre y apellido">
+
+    <label>Tu teléfono</label>
+    <input id="cv-telefono" required placeholder="Tu número de contacto">
+
+    <button type="submit">Enviar publicación por WhatsApp</button>
+  </form>
+</section>
+
+<script>
+document.getElementById("cv-form").addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  const mensaje =
+    "NUEVA PUBLICACIÓN - CONECTA VIRASORO\n\n" +
+    "Categoría: " + document.getElementById("cv-categoria").value + "\n" +
+    "Título: " + document.getElementById("cv-titulo").value + "\n" +
+    "Descripción: " + document.getElementById("cv-descripcion").value + "\n" +
+    "Precio: " + (document.getElementById("cv-precio").value || "A consultar") + "\n" +
+    "Nombre: " + document.getElementById("cv-nombre").value + "\n" +
+    "Teléfono: " + document.getElementById("cv-telefono").value;
+
+  const url = "https://wa.me/5493758565118?text=" + encodeURIComponent(mensaje);
+  window.open(url, "_blank");
+});
+</script>
 
 </body>
 </html>
