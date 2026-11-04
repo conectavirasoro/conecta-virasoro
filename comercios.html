@@ -429,7 +429,7 @@ footer{
    </div>
 
    <button type="submit">
-    📲 Enviar solicitud por WhatsApp
+    📨 Enviar solicitud
    </button>
 
   </form>
@@ -616,7 +616,7 @@ async function enviarSolicitud(event){
  form.reset();
  let estado=document.getElementById("estadoInscripcion");
  if(!estado){estado=document.createElement("p");estado.id="estadoInscripcion";estado.className="nota";form.prepend(estado);}
- estado.textContent="✅ ¡Solicitud recibida! Tu comercio quedó pendiente de revisión y aprobación. Todavía no aparece publicado.";
+ estado.style.cssText="display:block;background:#e5f6f1;color:#145c48;border:2px solid #20b98b;border-radius:12px;padding:18px;margin:18px 0;font-weight:600;line-height:1.6;text-align:center;";estado.setAttribute("role","status");estado.setAttribute("aria-live","polite");estado.textContent="✅ ¡Muchas gracias por sumar tu comercio a Conecta Virasoro! Recibimos los datos correctamente. Nuestro equipo revisará la información y, si está todo bien, aprobará la publicación. Por ahora, tu solicitud está pendiente de revisión.";
  estado.scrollIntoView({behavior:"smooth",block:"center"});
 }
 
