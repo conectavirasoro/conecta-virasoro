@@ -70,11 +70,40 @@ footer{background:#102b46;color:#fff;text-align:center;padding:25px;font-size:14
 <section id="nosotros"><div class="info"><h2>Tu ciudad, más conectada</h2><p>Un espacio para impulsar los comercios, emprendedores, trabajadores y oportunidades de Virasoro y localidades cercanas.</p><a href="https://wa.me/5493758565118?text=Hola%20Conecta%20Virasoro%2C%20quiero%20hacer%20una%20consulta." target="_blank" rel="noopener">Contactar a Conecta Virasoro</a></div></section>
 </main>
 <footer><p>© 2026 Conecta Virasoro</p><p>Conectando personas, negocios y oportunidades.</p><p><a href="https://wa.me/5493758565118">WhatsApp de contacto</a></p></footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+const SUPABASE_URL="https://gxcutobwmwdbsfwjgcqr.supabase.co";
+const SUPABASE_KEY="sb_publishable_xy9wfM2qYKi8qbdMDAY3dQ_mgTZLuSR";
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 function normalizar(t){return t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")}
 function buscar(){const q=normalizar(document.getElementById("busqueda").value.trim());const cards=[...document.querySelectorAll("#categoriasGrid .card")];cards.forEach(c=>c.style.display=!q||normalizar(c.innerText).includes(q)?"block":"none");if(q&&!cards.some(c=>c.style.display!=="none"))alert("No encontramos esa categoría. Probá con otra palabra.");document.getElementById("categorias").scrollIntoView({behavior:"smooth"});}
 document.getElementById("busqueda").addEventListener("keydown",e=>{if(e.key==="Enter")buscar()});
-document.getElementById("publicacionForm").addEventListener("submit",e=>{e.preventDefault();const ids=["categoria","titulo","descripcion","precio","ubicacion","nombre","telefono"];const labels=["Categoría","Título","Descripción","Precio","Zona o localidad","Nombre","WhatsApp"];const lines=ids.map((id,i)=>labels[i]+": "+(document.getElementById(id).value.trim()||"No informado"));const msg="NUEVA SOLICITUD - CONECTA VIRASORO\n\n"+lines.join("\n");window.open("https://wa.me/5493758565118?text="+encodeURIComponent(msg),"_blank","noopener");});
+document.getElementById("publicacionForm").addEventListener("submit",async e=>{
+ e.preventDefault();
+ const form=e.currentTarget;
+ const boton=form.querySelector('button[type="submit"]');
+ const textoOriginal=boton.textContent;
+ boton.disabled=true;boton.textContent="Enviando solicitud...";
+ const mapa={"Comercios":"comercios","Servicios":"servicios","Empleos":"empleos","Alquileres":"alquileres","Compra y venta":"compra-venta","Vehículos":"vehiculos"};
+ const registro={
+  categoria:mapa[document.getElementById("categoria").value],
+  tipo_aviso:null,
+  titulo:document.getElementById("titulo").value.trim(),
+  descripcion:document.getElementById("descripcion").value.trim(),
+  precio:document.getElementById("precio").value.trim()||null,
+  zona:document.getElementById("ubicacion").value.trim()||null,
+  contacto:document.getElementById("nombre").value.trim()+" | "+document.getElementById("telefono").value.trim(),
+  estado:"pendiente"
+ };
+ const {error}=await db.from("publicaciones").insert(registro);
+ boton.disabled=false;boton.textContent=textoOriginal;
+ if(error){console.error(error);alert("No pudimos guardar la solicitud. Intentá nuevamente o contactanos por WhatsApp.");return;}
+ form.reset();
+ let estado=document.getElementById("estadoEnvio");
+ if(!estado){estado=document.createElement("p");estado.id="estadoEnvio";estado.className="note";form.prepend(estado);}
+ estado.textContent="✅ ¡Solicitud recibida! Quedó pendiente de revisión y aprobación. Todavía no aparece publicada.";
+ estado.scrollIntoView({behavior:"smooth",block:"center"});
+});
 if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}
 </script>
 </body>
