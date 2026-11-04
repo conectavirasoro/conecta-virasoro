@@ -63,7 +63,7 @@ footer{background:#102b46;color:#fff;text-align:center;padding:25px;font-size:14
    <div class="field"><label for="nombre">Tu nombre *</label><input id="nombre" required></div>
    <div class="field"><label for="telefono">Tu WhatsApp *</label><input id="telefono" required type="tel" placeholder="Tu número de contacto"></div>
    <div class="field full"><div class="note">🔒 La solicitud llega al equipo de Conecta Virasoro. No se publica automáticamente: primero verificamos los datos.</div></div>
-   <button type="submit">📲 Enviar publicación por WhatsApp</button>
+   <button type="submit">📨 Enviar solicitud</button>
   </form>
  </div>
 </section>
@@ -101,7 +101,7 @@ document.getElementById("publicacionForm").addEventListener("submit",async e=>{
  form.reset();
  let estado=document.getElementById("estadoEnvio");
  if(!estado){estado=document.createElement("p");estado.id="estadoEnvio";estado.className="note";form.prepend(estado);}
- estado.textContent="✅ ¡Solicitud recibida! Quedó pendiente de revisión y aprobación. Todavía no aparece publicada.";
+ estado.style.cssText="display:block;background:#e5f6f1;color:#145c48;border:2px solid #20b98b;border-radius:12px;padding:18px;margin:18px 0;font-weight:600;line-height:1.6;text-align:center;";estado.setAttribute("role","status");estado.setAttribute("aria-live","polite");estado.textContent="✅ ¡Muchas gracias por tu publicación! Recibimos tus datos correctamente. Nuestro equipo los revisará y, si está todo bien, aprobará el aviso para que aparezca en Conecta Virasoro. Por ahora, tu solicitud está pendiente de revisión.";
  estado.scrollIntoView({behavior:"smooth",block:"center"});
 });
 if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}
