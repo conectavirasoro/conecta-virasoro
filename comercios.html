@@ -5,14 +5,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Comercios | Conecta Virasoro</title>
+
 <style>
 *{box-sizing:border-box}
+
 body{
  margin:0;
  font-family:Arial,sans-serif;
  background:#f4f6fa;
  color:#17243a;
 }
+
 header{
  background:#102b46;
  color:white;
@@ -22,17 +25,21 @@ header{
  align-items:center;
  flex-wrap:wrap;
 }
+
 .logo{font-size:23px;font-weight:bold}
 .logo span{color:#36d6a0}
 header a{color:white;text-decoration:none}
+
 .hero{
  background:linear-gradient(120deg,#102b46,#176b79);
  color:white;
  text-align:center;
  padding:55px 20px;
 }
+
 .hero h1{font-size:34px}
 .hero p{font-size:17px}
+
 .search{
  max-width:520px;
  margin:25px auto 0;
@@ -41,6 +48,7 @@ header a{color:white;text-decoration:none}
  padding:7px;
  border-radius:9px;
 }
+
 .search input{
  flex:1;
  min-width:0;
@@ -49,6 +57,7 @@ header a{color:white;text-decoration:none}
  outline:none;
  font-size:15px;
 }
+
 .search button{
  background:#20b98b;
  color:white;
@@ -57,13 +66,16 @@ header a{color:white;text-decoration:none}
  border-radius:7px;
  cursor:pointer;
 }
+
 section{padding:40px 7%}
 h2{text-align:center}
+
 .grid{
  display:grid;
  grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
  gap:17px;
 }
+
 .card{
  background:white;
  border-radius:12px;
@@ -71,18 +83,23 @@ h2{text-align:center}
  text-align:center;
  box-shadow:0 3px 14px #0000000d;
  cursor:pointer;
+ transition:.2s;
 }
+
 .card .emoji{font-size:34px}
 .card h3{margin:10px 0 5px}
 .card p{font-size:13px;color:#667085}
 .card:hover{transform:translateY(-3px)}
+
 #resultados{margin-top:30px}
+
 .aviso{
  background:white;
  padding:25px;
  border-radius:12px;
  text-align:center;
 }
+
 .boton{
  display:inline-block;
  background:#20b98b;
@@ -91,15 +108,103 @@ h2{text-align:center}
  padding:13px 20px;
  border-radius:8px;
  margin-top:12px;
+ border:0;
+ cursor:pointer;
+ font-size:15px;
 }
+
+.inscripcion{
+ background:white;
+ max-width:750px;
+ margin:20px auto;
+ padding:30px;
+ border-radius:14px;
+ box-shadow:0 3px 18px #0000000d;
+}
+
+.inscripcion p{
+ text-align:center;
+ color:#667085;
+ line-height:1.5;
+}
+
+.formulario{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:16px;
+ margin-top:25px;
+}
+
+.campo{
+ display:flex;
+ flex-direction:column;
+ gap:7px;
+}
+
+.campo.completo{grid-column:1/-1}
+
+.campo label{
+ font-weight:bold;
+ font-size:14px;
+}
+
+.campo input,
+.campo select,
+.campo textarea{
+ width:100%;
+ padding:13px;
+ border:1px solid #d5dce5;
+ border-radius:8px;
+ font-size:15px;
+ font-family:Arial,sans-serif;
+}
+
+.campo textarea{
+ min-height:100px;
+ resize:vertical;
+}
+
+.nota{
+ background:#eaf8f3;
+ padding:14px;
+ border-radius:8px;
+ color:#176b55;
+ font-size:13px;
+ line-height:1.5;
+}
+
+.formulario button{
+ grid-column:1/-1;
+ width:100%;
+ padding:15px;
+ background:#20b98b;
+ color:white;
+ border:0;
+ border-radius:8px;
+ font-size:16px;
+ font-weight:bold;
+ cursor:pointer;
+}
+
+.formulario button:hover{background:#159b73}
+
 footer{
  background:#102b46;
  color:white;
  text-align:center;
  padding:25px;
 }
+
+@media(max-width:600px){
+ .hero h1{font-size:27px}
+ .formulario{grid-template-columns:1fr}
+ .campo.completo{grid-column:auto}
+ .formulario button{grid-column:auto}
+ .inscripcion{padding:20px}
+}
 </style>
 </head>
+
 <body>
 
 <header>
@@ -110,6 +215,7 @@ footer{
 <div class="hero">
  <h1>🏪 Comercios de Virasoro</h1>
  <p>Encontrá los negocios de nuestra ciudad en un solo lugar.</p>
+
  <div class="search">
   <input id="busqueda" placeholder="Buscar un comercio o rubro...">
   <button onclick="buscar()">Buscar</button>
@@ -117,32 +223,47 @@ footer{
 </div>
 
 <section>
+
  <h2>Explorá por rubro</h2>
+
  <div class="grid" id="rubros">
+
   <div class="card" onclick="filtrar('Almacenes')">
-   <div class="emoji">🛒</div><h3>Almacenes</h3>
+   <div class="emoji">🛒</div>
+   <h3>Almacenes</h3>
    <p>Alimentos y bebidas</p>
   </div>
+
   <div class="card" onclick="filtrar('Indumentaria')">
-   <div class="emoji">👕</div><h3>Indumentaria</h3>
+   <div class="emoji">👕</div>
+   <h3>Indumentaria</h3>
    <p>Ropa y calzado</p>
   </div>
+
   <div class="card" onclick="filtrar('Gastronomía')">
-   <div class="emoji">🍕</div><h3>Gastronomía</h3>
+   <div class="emoji">🍕</div>
+   <h3>Gastronomía</h3>
    <p>Restaurantes y comidas</p>
   </div>
+
   <div class="card" onclick="filtrar('Ferreterías')">
-   <div class="emoji">🔧</div><h3>Ferreterías</h3>
+   <div class="emoji">🔧</div>
+   <h3>Ferreterías</h3>
    <p>Herramientas y materiales</p>
   </div>
+
   <div class="card" onclick="filtrar('Tecnología')">
-   <div class="emoji">📱</div><h3>Tecnología</h3>
+   <div class="emoji">📱</div>
+   <h3>Tecnología</h3>
    <p>Celulares y electrónica</p>
   </div>
+
   <div class="card" onclick="filtrar('Otros')">
-   <div class="emoji">🏬</div><h3>Otros rubros</h3>
+   <div class="emoji">🏬</div>
+   <h3>Otros rubros</h3>
    <p>Más comercios</p>
   </div>
+
  </div>
 
  <div id="resultados">
@@ -150,11 +271,104 @@ footer{
    <h2>¡Tu negocio puede estar acá!</h2>
    <p>Estamos construyendo el directorio comercial de Virasoro.</p>
    <p>Muy pronto vas a poder encontrar los comercios de nuestra ciudad.</p>
-   <a class="boton" href="https://wa.me/5493758565118?text=Hola%2C%20quiero%20publicar%20mi%20comercio%20en%20Conecta%20Virasoro">
+   <a class="boton" href="#inscripcion">
     Publicar mi comercio
    </a>
   </div>
  </div>
+
+</section>
+
+<section id="inscripcion">
+
+ <div class="inscripcion">
+
+  <h2>🚀 Sumá tu comercio a Conecta Virasoro</h2>
+
+  <p>
+   La inscripción es gratuita. Completá tus datos para que podamos
+   conocer tu negocio y preparar tu publicación.
+  </p>
+
+  <form class="formulario" onsubmit="enviarSolicitud(event)">
+
+   <div class="campo">
+    <label for="nombre">Nombre del comercio *</label>
+    <input id="nombre" required placeholder="Ej: Mi negocio">
+   </div>
+
+   <div class="campo">
+    <label for="rubro">Rubro *</label>
+    <select id="rubro" required>
+     <option value="">Seleccioná un rubro</option>
+     <option>Almacenes</option>
+     <option>Indumentaria</option>
+     <option>Gastronomía</option>
+     <option>Ferreterías</option>
+     <option>Tecnología</option>
+     <option>Salud y belleza</option>
+     <option>Servicios</option>
+     <option>Automotores</option>
+     <option>Otros</option>
+    </select>
+   </div>
+
+   <div class="campo completo">
+    <label for="descripcion">Descripción del negocio *</label>
+    <textarea id="descripcion" required placeholder="Contanos qué productos o servicios ofrecés..."></textarea>
+   </div>
+
+   <div class="campo">
+    <label for="direccion">Dirección *</label>
+    <input id="direccion" required placeholder="Calle y número, localidad">
+   </div>
+
+   <div class="campo">
+    <label for="telefono">WhatsApp o teléfono *</label>
+    <input id="telefono" required type="tel" placeholder="Ej: 3758 123456">
+   </div>
+
+   <div class="campo">
+    <label for="instagram">Instagram</label>
+    <input id="instagram" placeholder="Enlace de Instagram">
+   </div>
+
+   <div class="campo">
+    <label for="facebook">Facebook</label>
+    <input id="facebook" placeholder="Enlace de Facebook">
+   </div>
+
+   <div class="campo">
+    <label for="tiktok">TikTok</label>
+    <input id="tiktok" placeholder="Enlace de TikTok">
+   </div>
+
+   <div class="campo">
+    <label for="web">Página web</label>
+    <input id="web" placeholder="https://www.tunegocio.com">
+   </div>
+
+   <div class="campo completo">
+    <label for="foto">Enlace de foto o logo (opcional)</label>
+    <input id="foto" placeholder="Pegá el enlace público de tu imagen">
+   </div>
+
+   <div class="campo completo">
+    <div class="nota">
+     🔒 Tu solicitud será enviada a Conecta Virasoro para su revisión.
+     El comercio solamente se publicará después de ser aprobado.
+     La inscripción inicial es gratuita.
+    </div>
+   </div>
+
+   <button type="submit">
+    📲 Enviar solicitud por WhatsApp
+   </button>
+
+  </form>
+
+ </div>
+
 </section>
 
 <footer>
@@ -163,19 +377,66 @@ footer{
 </footer>
 
 <script>
+
 function filtrar(rubro){
  document.getElementById('busqueda').value=rubro;
  buscar();
 }
+
 function buscar(){
+
  const valor=document.getElementById('busqueda').value.trim();
+
  if(!valor){
   alert('Escribí qué comercio estás buscando');
   return;
  }
+
  alert('Estamos preparando el directorio de comercios. ¡Pronto habrá más negocios disponibles!');
 }
+
+function enviarSolicitud(event){
+
+ event.preventDefault();
+
+ const nombre=document.getElementById('nombre').value.trim();
+ const rubro=document.getElementById('rubro').value;
+ const descripcion=document.getElementById('descripcion').value.trim();
+ const direccion=document.getElementById('direccion').value.trim();
+ const telefono=document.getElementById('telefono').value.trim();
+ const instagram=document.getElementById('instagram').value.trim();
+ const facebook=document.getElementById('facebook').value.trim();
+ const tiktok=document.getElementById('tiktok').value.trim();
+ const web=document.getElementById('web').value.trim();
+ const foto=document.getElementById('foto').value.trim();
+
+ const mensaje=
+`¡Hola! Quiero solicitar la publicación de mi comercio en Conecta Virasoro.
+
+NOMBRE: ${nombre}
+RUBRO: ${rubro}
+DESCRIPCIÓN: ${descripcion}
+DIRECCIÓN: ${direccion}
+WHATSAPP/TELÉFONO: ${telefono}
+
+INSTAGRAM: ${instagram || "No informado"}
+FACEBOOK: ${facebook || "No informado"}
+TIKTOK: ${tiktok || "No informado"}
+PÁGINA WEB: ${web || "No informado"}
+FOTO O LOGO: ${foto || "No informado"}
+
+Solicito la revisión y aprobación de mi comercio. ¡Gracias!`;
+
+ const numero="5493758565118";
+ const enlace="https://wa.me/"+numero+"?text="+encodeURIComponent(mensaje);
+
+ window.location.href=enlace;
+}
+
 </script>
 
 </body>
 </html>
+
+
+
