@@ -1,4 +1,4 @@
-const CACHE="conecta-virasoro-v3";
+const CACHE="conecta-virasoro-v4";
 const FILES=[
  "./",
  "./index.html",
