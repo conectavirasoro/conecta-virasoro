@@ -114,9 +114,9 @@ document.getElementById("formPublicacion").addEventListener("submit",async e=>{
   avisoEstado.id="estadoEnvio";
   avisoEstado.setAttribute("role","status");
   avisoEstado.setAttribute("aria-live","polite");
-  avisoEstado.style.cssText="display:block;position:sticky;top:12px;z-index:50;background:#e5f6f1;color:#145c48;border:2px solid #20b98b;border-radius:12px;padding:18px;margin:18px 0;font-weight:600;line-height:1.6;text-align:center;box-shadow:0 6px 20px #102b4620;"
   form.parentNode.insertBefore(avisoEstado,form);
  }
+ avisoEstado.style.cssText="display:block;position:sticky;top:12px;z-index:50;background:#e5f6f1;color:#145c48;border:2px solid #20b98b;border-radius:12px;padding:18px;margin:18px 0;font-weight:600;line-height:1.6;text-align:center;box-shadow:0 6px 20px #102b4620;";
  avisoEstado.textContent="✅ ¡Muchas gracias por tu publicación! Recibimos tus datos correctamente. Nuestro equipo los revisará y, si todo está bien, aprobará el aviso para que aparezca en Conecta Virasoro. Por ahora, tu solicitud está pendiente de revisión.";
  avisoEstado.hidden=false;
  form.reset();
