@@ -610,8 +610,10 @@ async function cargarComerciosAprobados(){
  (data||[]).forEach(x=>{
   const contacto=String(x.contacto||"").split("|");
   const telefono=contacto.slice(1).join("|").replace(/\D/g,"");
-  if(existentes.has(String(x.titulo||"").toLowerCase()))return;
-  comercios.push({nombre:x.titulo,rubro:x.tipo_aviso||"Otros",descripcion:String(x.descripcion||""),ubicacion:x.zona||"Gobernador Virasoro",telefono,instagram:x.instagram_url||"",facebook:x.facebook_url||"",tiktok:x.tiktok_url||"",web:x.website_url||x.redes_url||"",foto:x.imagen_url||"",emoji:"🏪"});
+  const perfil={nombre:x.titulo,rubro:x.tipo_aviso||"Otros",descripcion:String(x.descripcion||""),ubicacion:x.zona||"Gobernador Virasoro",telefono,instagram:x.instagram_url||"",facebook:x.facebook_url||"",tiktok:x.tiktok_url||"",web:x.website_url||x.redes_url||"",foto:x.imagen_url||"",emoji:"🏪"};
+  const existente=comercios.find(c=>String(c.nombre||"").toLowerCase()===String(x.titulo||"").toLowerCase());
+  if(existente){Object.assign(existente,perfil);return;}
+  comercios.push(perfil);
   existentes.add(String(x.titulo||"").toLowerCase());
  });
  mostrarComercios(comercios);
