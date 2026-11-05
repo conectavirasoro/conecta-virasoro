@@ -478,7 +478,7 @@ function normalizar(texto){
 
 // Muestra los comercios
 function escaparHTML(valor){return String(valor??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
-function urlSegura(valor){const u=String(valor||"").trim();return /^https?:\\/\\//i.test(u)?u:"";}
+function urlSegura(valor){const u=String(valor||"").trim();return u.startsWith("https://")||u.startsWith("http://")?u:"";}
 function normalizarWhatsApp(valor){let n=String(valor||"").replace(/[^0-9]/g,"");if(n.startsWith("00"))n=n.slice(2);if(n.startsWith("0"))n=n.slice(1);if(n&&!n.startsWith("54")&&n.length<=10)n="549"+n;return n;}
 function mostrarComercios(lista){
  const resultados=document.getElementById("resultados");
@@ -583,7 +583,7 @@ async function enviarSolicitud(event){
   categoria:"comercios",
   tipo_aviso:rubro,
   titulo:nombre,
-  descripcion:detalle,
+  descripcion:descripcion,
   zona:direccion,
   contacto:nombre+" | "+telefono,
   redes_url:redes[0]||null,
