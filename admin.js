@@ -123,23 +123,36 @@ document.querySelectorAll("[data-filter]").forEach(button=>button.addEventListen
 publicationList.addEventListener("click",async e=>{
  const button=e.target.closest("button[data-action]");
  if(!button)return;
- const id=Number(button.dataset.id);
+ const id=button.dataset.id;
  const accion=button.dataset.action;
  if(accion==="eliminar"&&!confirm("¿Seguro que querés eliminar esta publicación? Esta acción no se puede deshacer."))return;
  button.disabled=true;
- let result;
- if(accion==="aprobar"||accion==="rechazar"){
-  result=await db.from("publicaciones").update({estado:accion==="aprobar"?"aprobada":"rechazada"}).eq("id",id).select("id,estado").maybeSingle();
- }else{
-  result=await db.from("publicaciones").delete().eq("id",id);
- }
- if(result.error || ((accion==="aprobar"||accion==="rechazar") && !result.data)){
-  mensaje(dashboardMessage,result.error?"No se pudo completar la acción: "+result.error.message:"Supabase no modificó la publicación. Revisaremos los permisos de actualización.",true);
+ const textoOriginal=button.textContent;
+ button.textContent="Procesando...";
+ mensaje(dashboardMessage,"Procesando la acción...");
+ try{
+  let result;
+  if(accion==="aprobar"||accion==="rechazar"){
+   result=await db.from("publicaciones")
+    .update({estado:accion==="aprobar"?"aprobada":"rechazada"})
+    .eq("id",id)
+    .select("id,estado")
+    .maybeSingle();
+   if(result.error)throw result.error;
+   if(!result.data)throw new Error("Supabase no modificó ninguna fila. Verificá que la sesión tenga rol admin y que la publicación exista.");
+   if(result.data.estado!==(accion==="aprobar"?"aprobada":"rechazada"))throw new Error("La base de datos no confirmó el nuevo estado.");
+  }else{
+   result=await db.from("publicaciones").delete().eq("id",id).select("id").maybeSingle();
+   if(result.error)throw result.error;
+   if(!result.data)throw new Error("No se eliminó ninguna publicación.");
+  }
+  mensaje(dashboardMessage,accion==="aprobar"?"¡Negocio aprobado y guardado correctamente!":accion==="rechazar"?"Publicación rechazada y guardada.":"Publicación eliminada.");
+  await cargarPublicaciones();
+ }catch(error){
+  mensaje(dashboardMessage,"No se pudo completar la acción: "+(error?.message||String(error)),true);
   button.disabled=false;
-  return;
+  button.textContent=textoOriginal;
  }
- mensaje(dashboardMessage,accion==="aprobar"?"Publicación aprobada y guardada.":accion==="rechazar"?"Publicación rechazada.":"Publicación eliminada.");
- await cargarPublicaciones();
 });
 
 document.getElementById("refreshButton").addEventListener("click",cargarPublicaciones);
