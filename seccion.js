@@ -26,6 +26,7 @@ function normalizarTelefono(t){
  return n;
 }
 function render(lista){
+ const mapa=perfilesOferta;
  const el=document.getElementById("listado");
  if(!lista.length){
   el.innerHTML='<div class="empty"><h2>🔎 Todavía no hay publicaciones aprobadas</h2><p>Estamos sumando propuestas de la comunidad. ¿Querés ser de los primeros en publicar?</p><a class="btn" href="#publicar">Enviar mi publicación</a></div>';
