@@ -12,6 +12,7 @@
 *{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f4f6fa;color:#17243a}
 header{background:#102b46;color:#fff;padding:18px 7%;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
 .logo{font-size:25px;font-weight:800}.logo span{color:#36d6a0}nav{display:flex;gap:15px;flex-wrap:wrap}nav a{color:#fff;text-decoration:none;font-size:14px}
+.install-app{background:#20b98b;color:#fff;border:0;border-radius:8px;padding:9px 13px;font-size:14px;font-weight:bold;cursor:pointer}.install-app:hover{background:#169b74}.install-app:focus-visible{outline:3px solid #fff;outline-offset:3px}
 .hero{background:linear-gradient(120deg,#102b46,#176b79);color:#fff;text-align:center;padding:72px 20px}
 .hero h1{font-size:clamp(30px,5vw,44px);margin:0 0 14px}.hero p{font-size:18px;line-height:1.6;margin:0}
 .search{display:flex;max-width:570px;margin:28px auto 0;background:#fff;padding:7px;border-radius:11px}
@@ -32,7 +33,7 @@ footer{background:#102b46;color:#fff;text-align:center;padding:25px;font-size:14
 <body>
 <header>
  <div class="logo">Conecta <span>Virasoro</span></div>
- <nav><a href="#categorias">Categorías</a><a href="ofertas.html">Ofertas</a><a href="#publicar">Publicar</a><a href="#nosotros">Nosotros</a></nav>
+ <nav><a href="#categorias">Categorías</a><a href="ofertas.html">Ofertas</a><a href="#publicar">Publicar</a><a href="#nosotros">Nosotros</a><button id="installAppBtn" class="install-app" type="button">📲 Instalar app</button></nav>
 </header>
 <main>
 <div class="hero">
@@ -166,6 +167,36 @@ document.getElementById("publicacionForm").addEventListener("submit",async e=>{
  estado.scrollIntoView({behavior:"smooth",block:"center"});
 });
 cargarUltimasPublicaciones();
+// Instalación de Conecta Virasoro como aplicación
+let instalacionPendiente=null;
+const botonInstalar=document.getElementById("installAppBtn");
+const esAplicacionInstalada=()=>window.matchMedia("(display-mode: standalone)").matches||window.navigator.standalone===true;
+if(esAplicacionInstalada()){botonInstalar.hidden=true;}
+window.addEventListener("beforeinstallprompt",evento=>{
+ evento.preventDefault();
+ instalacionPendiente=evento;
+ botonInstalar.hidden=false;
+});
+botonInstalar.addEventListener("click",async()=>{
+ if(esAplicacionInstalada()){botonInstalar.hidden=true;return;}
+ if(instalacionPendiente){
+  instalacionPendiente.prompt();
+  const eleccion=await instalacionPendiente.userChoice;
+  if(eleccion.outcome==="accepted")botonInstalar.textContent="¡App instalada!";
+  instalacionPendiente=null;
+  return;
+ }
+ const esIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
+ if(esIOS){
+  alert("Para instalar Conecta Virasoro en tu iPhone o iPad: tocá el botón Compartir del navegador y elegí «Agregar a pantalla de inicio».");
+ }else{
+  alert("Para instalar Conecta Virasoro, abrí el menú de tu navegador (⋮ o ⋯) y elegí «Instalar aplicación» o «Agregar a pantalla de inicio». Si no aparece, probá desde Chrome actualizado.");
+ }
+});
+window.addEventListener("appinstalled",()=>{
+ botonInstalar.textContent="¡App instalada!";
+ botonInstalar.disabled=true;
+});
 if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}
 </script>
 </body>
