@@ -3,7 +3,8 @@ servicios:{titulo:"Servicios",emoji:"🔧",subtitulo:"Encontrá profesionales y 
 empleos:{titulo:"Empleos",emoji:"💼",subtitulo:"Conectamos a quienes buscan trabajo con quienes necesitan incorporar personal.",categorias:["Administración","Comercio","Gastronomía","Construcción","Transporte","Oficios","Otros"],pregunta:"¿Qué querés publicar?",ejemplo:"Ej.: Se busca vendedor/a",empleo:true},
 alquileres:{titulo:"Alquileres",emoji:"🏠",subtitulo:"Casas, departamentos, habitaciones y locales en alquiler.",categorias:["Casa","Departamento","Habitación","Local comercial","Galpón","Otros"],pregunta:"¿Qué propiedad ofrecés?",ejemplo:"Ej.: Departamento de 2 habitaciones"},
 "compra-venta":{titulo:"Compra y venta",emoji:"🛒",subtitulo:"Publicá productos nuevos o usados y encontrá oportunidades cerca tuyo.",categorias:["Hogar","Electrodomésticos","Muebles","Ropa y calzado","Herramientas","Tecnología","Otros"],pregunta:"¿Qué producto ofrecés?",ejemplo:"Ej.: Vendo bicicleta en buen estado"},
-vehiculos:{titulo:"Vehículos",emoji:"🚗",subtitulo:"Autos, motos, camionetas y otros vehículos.",categorias:["Autos","Motos","Camionetas","Camiones","Maquinaria","Repuestos","Otros"],pregunta:"¿Qué vehículo o producto ofrecés?",ejemplo:"Ej.: Vendo moto 150 cc"}
+vehiculos:{titulo:"Vehículos",emoji:"🚗",subtitulo:"Autos, motos, camionetas y otros vehículos.",categorias:["Autos","Motos","Camionetas","Camiones","Maquinaria","Repuestos","Otros"],pregunta:"¿Qué vehículo o producto ofrecés?",ejemplo:"Ej.: Vendo moto 150 cc"},
+ofertas:{titulo:"Ofertas y promociones",emoji:"🎁",subtitulo:"Descubrí descuentos, promociones y oportunidades de comercios, emprendedores y vecinos de Virasoro.",categorias:["Descuentos","Promociones","2x1","Combos y ofertas gastronómicas","Liquidaciones","Ofertas de servicios","Otras ofertas"],pregunta:"¿Qué oferta o promoción querés publicar?",ejemplo:"Ej.: 20% de descuento en indumentaria"}
 };
 
 const SUPABASE_URL="https://gxcutobwmwdbsfwjgcqr.supabase.co";
