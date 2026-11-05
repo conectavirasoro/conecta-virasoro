@@ -529,7 +529,7 @@ function buscar(){
   normalizar(
    comercio.nombre+" "+
    comercio.rubro+" "+
-   comercio.descripcion
+   comercio.descripcion+" "+(comercio.ubicacion||"")
   ).includes(valor)
  );
 
