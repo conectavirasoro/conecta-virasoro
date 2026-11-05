@@ -105,7 +105,7 @@ function renderPublicaciones(){
   const fecha=p.created_at?new Date(p.created_at).toLocaleString("es-AR"):"";
   const redesAdmin=[["Instagram",p.instagram_url],["Facebook",p.facebook_url],["TikTok",p.tiktok_url],["Web",p.website_url],["Imagen/logo",p.imagen_url]].filter(x=>String(x[1]||"").startsWith("https://")||String(x[1]||"").startsWith("http://"));
   const enlacesAdmin=redesAdmin.map(x=>'<a target="_blank" rel="noopener" href="'+escapeHtml(x[1])+'">'+escapeHtml(x[0])+'</a>').join(" · ");
-  return '<article class="publication"><span class="tag">'+escapeHtml(p.estado)+'</span><h3>'+escapeHtml(p.titulo)+'</h3><p>'+escapeHtml(p.descripcion)+'</p>'+(enlacesAdmin?'<p class="meta"><strong>Perfil y redes:</strong> '+enlacesAdmin+'</p>':"")+'<div class="meta"><strong>Sección:</strong> '+escapeHtml(p.categoria)+' · <strong>Tipo:</strong> '+escapeHtml(p.tipo_aviso||"Sin especificar")+'<br><strong>Zona:</strong> '+escapeHtml(p.zona||"No indicada")+' · <strong>Precio:</strong> '+escapeHtml(p.precio||"No indicado")+'<br><strong>Contacto:</strong> '+escapeHtml(nombre)+' · '+escapeHtml(telefono)+'<br><strong>Recibida:</strong> '+escapeHtml(fecha)+(p.redes_url?'<br><strong>Enlace:</strong> <a target="_blank" rel="noopener" href="'+escapeHtml(p.redes_url)+'">Abrir enlace</a>':"")+'</div><div class="actions">'+enlaceWhatsapp+(p.estado!=="aprobada"?'<button class="primary" data-action="aprobar" data-id="'+p.id+'">✓ Aprobar</button>':"")+(p.estado!=="rechazada"?'<button class="secondary" data-action="rechazar" data-id="'+p.id+'">Rechazar</button>':"")+'<button class="danger" data-action="eliminar" data-id="'+p.id+'">Eliminar</button></div></article>';
+  return '<article class="publication"><span class="tag">'+escapeHtml(p.estado)+'</span><h3>'+escapeHtml(p.titulo)+'</h3><p>'+escapeHtml(p.descripcion)+'</p>'+(enlacesAdmin?'<p class="meta"><strong>Perfil y redes:</strong> '+enlacesAdmin+'</p>':"")+'<div class="meta"><strong>Sección:</strong> '+escapeHtml(p.categoria)+' · <strong>Tipo:</strong> '+escapeHtml(p.tipo_aviso||"Sin especificar")+'<br><strong>Zona:</strong> '+escapeHtml(p.zona||"No indicada")+' · <strong>Precio:</strong> '+escapeHtml(p.precio||"No indicado")+'<br><strong>Contacto:</strong> '+escapeHtml(nombre)+' · '+escapeHtml(telefono)+'<br><strong>Recibida:</strong> '+escapeHtml(fecha)+(p.redes_url?'<br><strong>Enlace:</strong> <a target="_blank" rel="noopener" href="'+escapeHtml(p.redes_url)+'">Abrir enlace</a>':"")+'</div><div class="actions">'+enlaceWhatsapp+'<button class="secondary" data-action="editar" data-id="'+p.id+'">✎ Editar</button>'+(p.estado!=="aprobada"?'<button class="primary" data-action="aprobar" data-id="'+p.id+'">✓ Aprobar</button>':"")+(p.estado!=="rechazada"?'<button class="secondary" data-action="rechazar" data-id="'+p.id+'">Rechazar</button>':"")+'<button class="danger" data-action="eliminar" data-id="'+p.id+'">Eliminar</button></div></article>';
  }).join("");
 }
 
@@ -125,6 +125,11 @@ publicationList.addEventListener("click",async e=>{
  if(!button)return;
  const id=button.dataset.id;
  const accion=button.dataset.action;
+ if(accion==="editar"){
+  const p=publicaciones.find(item=>String(item.id)===String(id));
+  if(p)abrirEditor(p);
+  return;
+ }
  if(accion==="eliminar"&&!confirm("¿Seguro que querés eliminar esta publicación? Esta acción no se puede deshacer."))return;
  button.disabled=true;
  const textoOriginal=button.textContent;
@@ -152,6 +157,66 @@ publicationList.addEventListener("click",async e=>{
   mensaje(dashboardMessage,"No se pudo completar la acción: "+(error?.message||String(error)),true);
   button.disabled=false;
   button.textContent=textoOriginal;
+ }
+});
+
+
+const editBackdrop=document.getElementById("editBackdrop");
+const editForm=document.getElementById("editForm");
+function ponerValor(id,value){document.getElementById(id).value=value??"";}
+function abrirEditor(p){
+ ocultarMensaje(document.getElementById("editMessage"));
+ ponerValor("editId",p.id);
+ ponerValor("editTitulo",p.titulo);
+ ponerValor("editCategoria",p.categoria);
+ ponerValor("editTipo",p.tipo_aviso);
+ ponerValor("editZona",p.zona);
+ ponerValor("editPrecio",p.precio);
+ ponerValor("editContacto",p.contacto);
+ ponerValor("editDescripcion",p.descripcion);
+ ponerValor("editEnlace",p.redes_url);
+ ponerValor("editInstagram",p.instagram_url);
+ ponerValor("editFacebook",p.facebook_url);
+ ponerValor("editTikTok",p.tiktok_url);
+ ponerValor("editWeb",p.website_url);
+ editBackdrop.hidden=false;
+ document.getElementById("editTitulo").focus();
+}
+function cerrarEditor(){editBackdrop.hidden=true;}
+document.getElementById("cancelEdit").addEventListener("click",cerrarEditor);
+editBackdrop.addEventListener("click",e=>{if(e.target===editBackdrop)cerrarEditor();});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!editBackdrop.hidden)cerrarEditor();});
+editForm.addEventListener("submit",async e=>{
+ e.preventDefault();
+ const save=document.getElementById("saveEdit");
+ save.disabled=true;save.textContent="Guardando...";
+ ocultarMensaje(document.getElementById("editMessage"));
+ const value=id=>document.getElementById(id).value.trim();
+ const cambios={
+  titulo:value("editTitulo"),
+  categoria:value("editCategoria"),
+  tipo_aviso:value("editTipo"),
+  zona:value("editZona"),
+  precio:value("editPrecio"),
+  contacto:value("editContacto"),
+  descripcion:value("editDescripcion"),
+  redes_url:value("editEnlace"),
+  instagram_url:value("editInstagram"),
+  facebook_url:value("editFacebook"),
+  tiktok_url:value("editTikTok"),
+  website_url:value("editWeb")
+ };
+ try{
+  const {data,error}=await db.from("publicaciones").update(cambios).eq("id",value("editId")).select("id").maybeSingle();
+  if(error)throw error;
+  if(!data)throw new Error("Supabase no confirmó cambios. Verificá los permisos de administración.");
+  cerrarEditor();
+  mensaje(dashboardMessage,"¡Cambios guardados correctamente!");
+  await cargarPublicaciones();
+ }catch(error){
+  mensaje(document.getElementById("editMessage"),"No se pudieron guardar los cambios: "+(error?.message||String(error)),true);
+ }finally{
+  save.disabled=false;save.textContent="Guardar cambios";
  }
 });
 
