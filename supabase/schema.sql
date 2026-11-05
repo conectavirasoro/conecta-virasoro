@@ -14,6 +14,10 @@ create table if not exists public.publicaciones (
   contacto text not null,
   redes_url text,
   imagen_url text,
+  instagram_url text,
+  facebook_url text,
+  tiktok_url text,
+  website_url text,
   estado text not null default 'pendiente'
     check (estado in ('pendiente', 'aprobada', 'rechazada')),
   created_at timestamptz not null default now()
