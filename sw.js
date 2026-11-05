@@ -1,8 +1,8 @@
-const CACHE="conecta-virasoro-v22";
+const CACHE="conecta-virasoro-v23";
 const FILES=[
  "./","./index.html","./admin.html","./admin.js","./comercios.html",
  "./servicios.html","./empleos.html","./alquileres.html","./compra-venta.html",
- "./vehiculos.html","./seccion.css","./seccion.js","./manifest.json","./icon.svg"
+ "./vehiculos.html","./ofertas.html","./seccion.css","./seccion.js","./manifest.json","./icon.svg"
 ];
 self.addEventListener("install",event=>{
  event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(FILES)));
