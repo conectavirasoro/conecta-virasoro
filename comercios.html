@@ -269,7 +269,7 @@ footer{
  text-align:center;
 }
 
-@media(max-width:600px){
+.imagen-logo{object-fit:cover;padding:0}.boton.perfil{background:#102b46;color:#fff;font:inherit}.perfil-modal{position:fixed;inset:0;z-index:1000;background:#102b46b8;display:flex;align-items:center;justify-content:center;padding:18px}.perfil-ventana{position:relative;background:#fff;border-radius:16px;padding:28px;width:min(100%,560px);max-height:90vh;overflow:auto;text-align:center;box-shadow:0 15px 50px #0004}.cerrar-perfil{position:absolute;right:12px;top:10px;background:#eaf0f6;border:0;border-radius:50%;width:40px;height:40px;font-size:22px;cursor:pointer}.perfil-foto{width:112px;height:112px;object-fit:cover;border-radius:18px;margin:8px auto 14px;display:block}.perfil-placeholder{background:#eaf8f3;display:flex;align-items:center;justify-content:center;font-size:52px}.perfil-ventana p{line-height:1.6;color:#667085}.perfil-ventana h2{margin:8px 0 12px}.boton.tiktok{background:#111}.boton.web{background:#176b79}.perfil-modal[hidden]{display:none!important}@media(max-width:600px){
  .hero h1{font-size:27px}
  .formulario{grid-template-columns:1fr}
  .campo.completo{grid-column:auto}
@@ -438,6 +438,8 @@ footer{
 
 </section>
 
+<div id="perfilModal" class="perfil-modal" hidden role="dialog" aria-modal="true" aria-labelledby="perfilTitulo" onclick="if(event.target===this)cerrarPerfil()"><div class="perfil-ventana"><button id="cerrarPerfil" class="cerrar-perfil" type="button" aria-label="Cerrar perfil" onclick="cerrarPerfil()">×</button><div id="perfilContenido"></div></div></div>
+
 <footer>
  <p>© 2026 Conecta Virasoro</p>
  <p>Conectando personas y negocios.</p>
@@ -475,49 +477,26 @@ function normalizar(texto){
 }
 
 // Muestra los comercios
+function escaparHTML(valor){return String(valor??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function urlSegura(valor){const u=String(valor||"").trim();return /^https?:\\/\\//i.test(u)?u:"";}
+function normalizarWhatsApp(valor){let n=String(valor||"").replace(/[^0-9]/g,"");if(n.startsWith("00"))n=n.slice(2);if(n.startsWith("0"))n=n.slice(1);if(n&&!n.startsWith("54")&&n.length<=10)n="549"+n;return n;}
 function mostrarComercios(lista){
-
  const resultados=document.getElementById("resultados");
-
- if(lista.length===0){
-  resultados.innerHTML=`
-   <div class="sin-resultados">
-    <h2>🔎 No encontramos comercios</h2>
-    <p>Probá con otro nombre o rubro.</p>
-    <button class="boton" onclick="limpiarBusqueda()">
-     Ver todos los comercios
-    </button>
-   </div>`;
-  return;
- }
-
- resultados.innerHTML=`
-  <h2>Comercios publicados</h2>
-  <div class="lista-comercios">
-   ${lista.map(comercio=>`
-    <article class="comercio">
-     <div class="logo-comercio">${comercio.emoji}</div>
-
-     <h3>${comercio.nombre}</h3>
-
-     <span class="etiqueta">${comercio.rubro}</span>
-
-     <p>${comercio.descripcion}</p>
-
-     <div class="datos-comercio">
-      📍 Zona de atención: ${comercio.ubicacion}
-     </div>
-
-     <div class="redes">
-      ${comercio.telefono ? `<a class="boton whatsapp" href="https://wa.me/${comercio.telefono}" target="_blank" rel="noopener noreferrer">💬 WhatsApp</a>` : ""}
-      ${comercio.instagram ? `<a class="boton instagram" href="${comercio.instagram}" target="_blank" rel="noopener noreferrer">📸 Instagram</a>` : ""}
-      ${comercio.facebook ? `<a class="boton facebook" href="${comercio.facebook}" target="_blank" rel="noopener noreferrer">📘 Facebook</a>` : ""}
-      ${comercio.web ? `<a class="boton" href="${comercio.web}" target="_blank" rel="noopener noreferrer">🔗 Web / redes</a>` : ""}
-     </div>
-    </article>
-   `).join("")}
-  </div>`;
+ if(lista.length===0){resultados.innerHTML='<div class="sin-resultados"><h2>🔎 No encontramos comercios</h2><p>Probá con otro nombre o rubro.</p><button class="boton" onclick="limpiarBusqueda()">Ver todos los comercios</button></div>';return;}
+ resultados.innerHTML='<h2>Comercios publicados</h2><div class="lista-comercios">'+lista.map((c,i)=>{
+  const foto=urlSegura(c.foto),wa=normalizarWhatsApp(c.telefono);
+  return '<article class="comercio">'+(foto?'<img class="logo-comercio imagen-logo" src="'+escaparHTML(foto)+'" alt="Logo de '+escaparHTML(c.nombre)+'" loading="lazy">':'<div class="logo-comercio">🏪</div>')+'<h3>'+escaparHTML(c.nombre)+'</h3><span class="etiqueta">'+escaparHTML(c.rubro)+'</span><p>'+escaparHTML(c.descripcion)+'</p><div class="datos-comercio">📍 '+escaparHTML(c.ubicacion||"Gobernador Virasoro")+'</div><div class="redes">'+(wa?'<a class="boton whatsapp" href="https://wa.me/'+escaparHTML(wa)+'" target="_blank" rel="noopener noreferrer">💬 WhatsApp</a>':"")+'<button class="boton perfil" type="button" data-perfil="'+i+'">Ver perfil completo</button></div></article>';
+ }).join("")+'</div>';
+ [...resultados.querySelectorAll("[data-perfil]")].forEach((btn,i)=>btn.addEventListener("click",()=>abrirPerfil(lista[i])));
 }
+function abrirPerfil(c){
+ const modal=document.getElementById("perfilModal"),contenido=document.getElementById("perfilContenido");
+ const foto=urlSegura(c.foto),wa=normalizarWhatsApp(c.telefono);
+ const links=[["Instagram",c.instagram,"instagram"],["Facebook",c.facebook,"facebook"],["TikTok",c.tiktok,"tiktok"],["Página web",c.web,"web"]].filter(x=>urlSegura(x[1]));
+ contenido.innerHTML=(foto?'<img class="perfil-foto" src="'+escaparHTML(foto)+'" alt="Logo de '+escaparHTML(c.nombre)+'">':'<div class="perfil-foto perfil-placeholder">🏪</div>')+'<h2>'+escaparHTML(c.nombre)+'</h2><span class="etiqueta">'+escaparHTML(c.rubro)+'</span><p>'+escaparHTML(c.descripcion)+'</p><p><strong>📍 Dirección:</strong><br>'+escaparHTML(c.ubicacion||"Gobernador Virasoro")+'</p><div class="redes">'+(wa?'<a class="boton whatsapp" href="https://wa.me/'+escaparHTML(wa)+'" target="_blank" rel="noopener noreferrer">💬 Contactar por WhatsApp</a>':"")+links.map(x=>'<a class="boton '+x[2]+'" href="'+escaparHTML(urlSegura(x[1]))+'" target="_blank" rel="noopener noreferrer">🔗 '+x[0]+'</a>').join("")+'</div>';
+ modal.hidden=false;document.body.style.overflow="hidden";document.getElementById("cerrarPerfil").focus();
+}
+function cerrarPerfil(){document.getElementById("perfilModal").hidden=true;document.body.style.overflow="";}
 
 // Búsqueda por nombre, descripción o rubro
 function buscar(){
@@ -609,6 +588,10 @@ async function enviarSolicitud(event){
   contacto:nombre+" | "+telefono,
   redes_url:redes[0]||null,
   imagen_url:foto||null,
+  instagram_url:instagram||null,
+  facebook_url:facebook||null,
+  tiktok_url:tiktok||null,
+  website_url:web||null,
   estado:"pendiente"
  });
  boton.disabled=false;boton.textContent=textoOriginal;
@@ -621,19 +604,14 @@ async function enviarSolicitud(event){
 }
 
 async function cargarComerciosAprobados(){
- const {data,error}=await db.from("publicaciones").select("id,titulo,tipo_aviso,descripcion,zona,contacto,redes_url").eq("categoria","comercios").eq("estado","aprobada").order("created_at",{ascending:false});
+ const {data,error}=await db.from("publicaciones").select("id,titulo,tipo_aviso,descripcion,zona,contacto,redes_url,imagen_url,instagram_url,facebook_url,tiktok_url,website_url").eq("categoria","comercios").eq("estado","aprobada").order("created_at",{ascending:false});
  if(error){console.error("No se pudieron cargar comercios aprobados:",error);return;}
  const existentes=new Set(comercios.map(c=>c.nombre.toLowerCase()));
  (data||[]).forEach(x=>{
   const contacto=String(x.contacto||"").split("|");
   const telefono=contacto.slice(1).join("|").replace(/\D/g,"");
-  const redes=String(x.redes_url||"").trim();
-  const redesDetalle=String(x.descripcion||"");
-  const instagram=(redesDetalle.match(/Instagram:\s*(https?:\/\/[^\s]+)/i)||[])[1]||"";
-  const facebook=(redesDetalle.match(/Facebook:\s*(https?:\/\/[^\s]+)/i)||[])[1]||"";
-  const web=(redesDetalle.match(/(?:Web|TikTok):\s*(https?:\/\/[^\s]+)/i)||[])[1]||redes;
   if(existentes.has(String(x.titulo||"").toLowerCase()))return;
-  comercios.push({nombre:x.titulo,rubro:x.tipo_aviso||"Otros",descripcion:redesDetalle.split("\n\n")[0],ubicacion:x.zona||"Gobernador Virasoro",telefono,instagram,facebook,web,emoji:"🏪"});
+  comercios.push({nombre:x.titulo,rubro:x.tipo_aviso||"Otros",descripcion:String(x.descripcion||""),ubicacion:x.zona||"Gobernador Virasoro",telefono,instagram:x.instagram_url||"",facebook:x.facebook_url||"",tiktok:x.tiktok_url||"",web:x.website_url||x.redes_url||"",foto:x.imagen_url||"",emoji:"🏪"});
   existentes.add(String(x.titulo||"").toLowerCase());
  });
  mostrarComercios(comercios);
