@@ -82,6 +82,10 @@ function normalizar(t){return t.toLowerCase().normalize("NFD").replace(/[\u0300-
 let publicacionesBusqueda=null;
 function escaparHTML(valor){return String(valor??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 function telefonoWhatsApp(valor){let n=String(valor||"").replace(/[^0-9]/g,"");if(n.startsWith("00"))n=n.slice(2);if(n.startsWith("0"))n=n.slice(1);if(n&&!n.startsWith("54")&&n.length<=10)n="549"+n;return n;}
+function enlaceCompartir(p){
+ const texto=["📢 "+(p.titulo||"Publicación en Conecta Virasoro"),p.categoria?"Categoría: "+p.categoria:"",p.descripcion||"",p.zona?"📍 "+p.zona:"",p.precio?"Precio: "+p.precio:"","Encontralo en Conecta Virasoro: https://conectavirasoro.github.io/conecta-virasoro/"].filter(Boolean).join("\n");
+ return "https://wa.me/?text="+encodeURIComponent(texto);
+}
 async function cargarUltimasPublicaciones(){
  const lista=document.getElementById("ultimasLista");
  const {data,error}=await db.from("publicaciones").select("categoria,tipo_aviso,titulo,descripcion,zona,precio,contacto").eq("estado","aprobada").order("created_at",{ascending:false}).limit(6);
@@ -93,8 +97,9 @@ async function cargarUltimasPublicaciones(){
   const nombre=partes[0]?.trim()||"";
   const telefono=telefonoWhatsApp(partes.slice(1).join("|"));
   const wa=telefono?'<a href="https://wa.me/'+escaparHTML(telefono)+'" target="_blank" rel="noopener noreferrer">💬 Contactar</a>':"";
+  const compartir='<a href="'+escaparHTML(enlaceCompartir(p))+'" target="_blank" rel="noopener noreferrer">↗ Compartir</a>';
   const ruta=rutas[p.categoria]||"#categorias";
-  return '<article class="ultima-card"><span class="resultado-tag">'+escaparHTML(p.categoria||"Publicación")+(p.tipo_aviso?" · "+escaparHTML(p.tipo_aviso):"")+'</span><h3>'+escaparHTML(p.titulo)+'</h3><p>'+escaparHTML(p.descripcion)+'</p>'+(p.zona?'<p>📍 '+escaparHTML(p.zona)+'</p>':"")+(p.precio?'<p><strong>Precio:</strong> '+escaparHTML(p.precio)+'</p>':"")+(nombre?'<p><small>Contacto: '+escaparHTML(nombre)+'</small></p>':"")+'<div>'+wa+'</div><a href="'+ruta+'">Ver categoría</a></article>';
+  return '<article class="ultima-card"><span class="resultado-tag">'+escaparHTML(p.categoria||"Publicación")+(p.tipo_aviso?" · "+escaparHTML(p.tipo_aviso):"")+'</span><h3>'+escaparHTML(p.titulo)+'</h3><p>'+escaparHTML(p.descripcion)+'</p>'+(p.zona?'<p>📍 '+escaparHTML(p.zona)+'</p>':"")+(p.precio?'<p><strong>Precio:</strong> '+escaparHTML(p.precio)+'</p>':"")+(nombre?'<p><small>Contacto: '+escaparHTML(nombre)+'</small></p>':"")+'<div>'+wa+compartir+'</div><a href="'+ruta+'">Ver categoría</a></article>';
  }).join("");
 }
 async function buscar(){
@@ -116,7 +121,8 @@ async function buscar(){
   const nombre=partes[0]?.trim()||"";
   const telefono=telefonoWhatsApp(partes.slice(1).join("|"));
   const wa=telefono?'<a class="resultado-contacto" href="https://wa.me/'+escaparHTML(telefono)+'" target="_blank" rel="noopener noreferrer">💬 Contactar por WhatsApp</a>':"";
-  return '<article class="resultado-card"><span class="resultado-tag">'+escaparHTML(p.categoria||"Publicación")+(p.tipo_aviso?" · "+escaparHTML(p.tipo_aviso):"")+'</span><h3>'+escaparHTML(p.titulo)+'</h3><p>'+escaparHTML(p.descripcion)+'</p>'+(p.zona?'<p>📍 '+escaparHTML(p.zona)+'</p>':"")+(p.precio?'<p><strong>Precio:</strong> '+escaparHTML(p.precio)+'</p>':"")+(nombre?'<p><small>Contacto: '+escaparHTML(nombre)+'</small></p>':"")+'<div>'+wa+'</div></article>';
+  const compartir='<a class="resultado-contacto" style="background:#176b79;margin-left:7px" href="'+escaparHTML(enlaceCompartir(p))+'" target="_blank" rel="noopener noreferrer">↗ Compartir</a>';
+  return '<article class="resultado-card"><span class="resultado-tag">'+escaparHTML(p.categoria||"Publicación")+(p.tipo_aviso?" · "+escaparHTML(p.tipo_aviso):"")+'</span><h3>'+escaparHTML(p.titulo)+'</h3><p>'+escaparHTML(p.descripcion)+'</p>'+(p.zona?'<p>📍 '+escaparHTML(p.zona)+'</p>':"")+(p.precio?'<p><strong>Precio:</strong> '+escaparHTML(p.precio)+'</p>':"")+(nombre?'<p><small>Contacto: '+escaparHTML(nombre)+'</small></p>':"")+'<div>'+wa+compartir+'</div></article>';
  }).join("");
 }
 document.getElementById("busqueda").addEventListener("keydown",e=>{if(e.key==="Enter")buscar()});
