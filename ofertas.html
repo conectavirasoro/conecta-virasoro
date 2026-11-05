@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#102b46"><meta name="description" content="Ofertas, descuentos y promociones de comercios, emprendedores y vecinos de Virasoro."><link rel="manifest" href="manifest.json"><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="stylesheet" href="seccion.css"><title>Ofertas y promociones | Conecta Virasoro</title></head>
+<body data-seccion="ofertas">
+<header><div class="logo">Conecta <span>Virasoro</span></div><a href="index.html">← Volver al inicio</a></header>
+<div class="hero"><h1>🎁 Ofertas y promociones en Virasoro</h1><p>Encontrá descuentos, 2x1, combos y oportunidades de comercios, emprendedores y vecinos.</p><div class="search"><input id="busqueda" placeholder="Buscar ofertas o promociones..." aria-label="Buscar ofertas"><button onclick="filtrar()">Buscar</button></div></div>
+<section><h2>🔥 Ofertas disponibles</h2><p style="text-align:center;color:#667085">Explorá las promociones publicadas y contactá directamente a quien las ofrece.</p><div id="listado"></div></section>
+<section id="publicar"><div class="formbox"><h2>📢 Publicá tu oferta gratis</h2><p>Comercios, emprendedores y particulares pueden compartir sus promociones. Revisamos cada publicación antes de mostrarla.</p>
+<div id="estadoEnvio" role="status" aria-live="polite" hidden></div>
+<form class="form" id="formPublicacion">
+<div class="field"><label for="tipo">Tipo de oferta *</label><select id="tipo" required></select></div>
+<div class="field full"><label id="campoTituloLabel" for="titulo">¿Qué oferta o promoción querés publicar? *</label><input id="titulo" required placeholder="Ej.: 20% de descuento en indumentaria"></div>
+<div class="field full"><label for="descripcion">Descripción y condiciones *</label><textarea id="descripcion" required placeholder="Contá qué incluye, vigencia, días y condiciones de la promoción..."></textarea></div>
+<div class="field"><label for="ubicacion">Zona o localidad *</label><input id="ubicacion" required placeholder="Ej.: Gobernador Virasoro"></div>
+<div class="field"><label for="precio">Precio o descuento (opcional)</label><input id="precio" placeholder="Ej.: 20% OFF / 2x1 / $5.000"></div>
+<div class="field"><label for="nombre">Nombre del comercio o persona *</label><input id="nombre" required placeholder="Quién ofrece la promoción"></div>
+<div class="field"><label for="telefono">WhatsApp de contacto *</label><input id="telefono" type="tel" required placeholder="Tu número de contacto"></div>
+<div class="field full"><label for="redes">Foto, redes o enlace (opcional)</label><input id="redes" placeholder="Pegá un enlace público si tenés"></div>
+<div class="field full"><div class="note">🔒 La publicación es gratuita. Tu oferta se enviará para revisión y aparecerá en Conecta Virasoro cuando sea aprobada.</div></div>
+<button type="submit">🎁 Enviar oferta</button></form></div></section>
+<footer><p>© 2026 Conecta Virasoro · ¡Virasoro está conectado!</p><p><a href="index.html" style="color:#8ee8cb">Volver a la portada</a></p></footer><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="seccion.js?v=11"></script></body></html>
