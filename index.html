@@ -32,7 +32,7 @@ footer{background:#102b46;color:#fff;text-align:center;padding:25px;font-size:14
 <body>
 <header>
  <div class="logo">Conecta <span>Virasoro</span></div>
- <nav><a href="#categorias">Categorías</a><a href="#publicar">Publicar</a><a href="#nosotros">Nosotros</a></nav>
+ <nav><a href="#categorias">Categorías</a><a href="ofertas.html">Ofertas</a><a href="#publicar">Publicar</a><a href="#nosotros">Nosotros</a></nav>
 </header>
 <main>
 <div class="hero">
@@ -50,6 +50,7 @@ footer{background:#102b46;color:#fff;text-align:center;padding:25px;font-size:14
   <a href="alquileres.html" class="card"><div class="emoji">🏠</div><h3>Alquileres</h3><p>Casas, departamentos y locales</p></a>
   <a href="compra-venta.html" class="card"><div class="emoji">🛒</div><h3>Compra y venta</h3><p>Productos y oportunidades</p></a>
   <a href="vehiculos.html" class="card"><div class="emoji">🚗</div><h3>Vehículos</h3><p>Autos, motos y más</p></a>
+  <a href="ofertas.html" class="card"><div class="emoji">🎁</div><h3>Ofertas y promociones</h3><p>Descuentos, 2x1 y oportunidades</p></a>
  </div>
 </section>
 <section id="ultimasPublicaciones" class="ultimas"><h2>🆕 Últimas publicaciones</h2><p class="ultimas-intro">Descubrí las novedades que se sumaron a Conecta Virasoro.</p><div id="ultimasLista" class="ultimas-grid"><div class="ultimas-vacio">Cargando las últimas publicaciones...</div></div><a class="ver-categoria" href="#categorias">Explorar todas las categorías ↓</a></section>
@@ -58,7 +59,7 @@ footer{background:#102b46;color:#fff;text-align:center;padding:25px;font-size:14
   <h2>📢 Publicá en Conecta Virasoro</h2>
   <p>Enviá tu propuesta gratis. Revisamos cada solicitud antes de publicarla.</p>
   <form class="form" id="publicacionForm">
-   <div class="field"><label for="categoria">¿Qué querés publicar?</label><select id="categoria" required><option value="">Elegí una categoría</option><option>Comercios</option><option>Servicios</option><option>Empleos</option><option>Alquileres</option><option>Compra y venta</option><option>Vehículos</option></select></div>
+   <div class="field"><label for="categoria">¿Qué querés publicar?</label><select id="categoria" required><option value="">Elegí una categoría</option><option>Comercios</option><option>Servicios</option><option>Empleos</option><option>Alquileres</option><option>Compra y venta</option><option>Vehículos</option><option>Ofertas y promociones</option></select></div>
    <div class="field"><label for="titulo">Título del aviso *</label><input id="titulo" required placeholder="Ej.: Busco trabajo de atención al público"></div>
    <div class="field full"><label for="descripcion">Descripción *</label><textarea id="descripcion" required placeholder="Contanos los detalles de tu publicación"></textarea></div>
    <div class="field"><label for="precio">Precio (opcional)</label><input id="precio" placeholder="Ej.: $150.000 / A convenir"></div>
@@ -91,7 +92,7 @@ async function cargarUltimasPublicaciones(){
  const {data,error}=await db.from("publicaciones").select("categoria,tipo_aviso,titulo,descripcion,zona,precio,contacto").eq("estado","aprobada").order("created_at",{ascending:false}).limit(6);
  if(error){lista.innerHTML='<div class="ultimas-vacio">No pudimos cargar las novedades en este momento.</div>';return;}
  if(!data||!data.length){lista.innerHTML='<div class="ultimas-vacio">Todavía no hay publicaciones nuevas. ¡Pronto vas a encontrar novedades acá!</div>';return;}
- const rutas={comercios:"comercios.html",servicios:"servicios.html",empleos:"empleos.html",alquileres:"alquileres.html","compra-venta":"compra-venta.html",vehiculos:"vehiculos.html"};
+ const rutas={comercios:"comercios.html",servicios:"servicios.html",empleos:"empleos.html",alquileres:"alquileres.html","compra-venta":"compra-venta.html",vehiculos:"vehiculos.html",ofertas:"ofertas.html"};
  lista.innerHTML=data.map(p=>{
   const partes=String(p.contacto||"").split("|");
   const nombre=partes[0]?.trim()||"";
@@ -132,7 +133,7 @@ document.getElementById("publicacionForm").addEventListener("submit",async e=>{
  const boton=form.querySelector('button[type="submit"]');
  const textoOriginal=boton.textContent;
  boton.disabled=true;boton.textContent="Enviando solicitud...";
- const mapa={"Comercios":"comercios","Servicios":"servicios","Empleos":"empleos","Alquileres":"alquileres","Compra y venta":"compra-venta","Vehículos":"vehiculos"};
+ const mapa={"Comercios":"comercios","Servicios":"servicios","Empleos":"empleos","Alquileres":"alquileres","Compra y venta":"compra-venta","Vehículos":"vehiculos","Ofertas y promociones":"ofertas"};
  const registro={
   categoria:mapa[document.getElementById("categoria").value],
   tipo_aviso:null,
