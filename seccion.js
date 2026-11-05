@@ -167,6 +167,7 @@ document.getElementById("formPublicacion").addEventListener("submit",async e=>{
  avisoEstado.textContent="✅ ¡Muchas gracias por tu publicación! Recibimos tus datos correctamente. Nuestro equipo los revisará y, si todo está bien, aprobará el aviso para que aparezca en Conecta Virasoro. Por ahora, tu solicitud está pendiente de revisión.";
  avisoEstado.hidden=false;
  form.reset();
+ if(clave==="ofertas")actualizarComercioSeleccionado();
  document.getElementById("tipo").innerHTML=cfg.categorias.map(c=>'<option value="'+escapar(c)+'">'+escapar(c)+'</option>').join("");
  if(clave==="servicios"){
   document.getElementById("modoServicio").hidden=false;
