@@ -231,6 +231,8 @@ h2{text-align:center}
  resize:vertical;
 }
 
+.vista-previa-foto{display:flex;align-items:center;gap:14px;margin-top:12px;padding:12px;background:#f4f8fb;border-radius:10px}.vista-previa-foto img{width:82px;height:82px;object-fit:cover;border-radius:12px}.vista-previa-foto[hidden]{display:none!important}
+
 .nota{
  background:#eaf8f3;
  padding:14px;
@@ -416,8 +418,13 @@ footer{
    </div>
 
    <div class="campo completo">
-    <label for="foto">Enlace de foto o logo (opcional)</label>
-    <input id="foto" placeholder="Pegá el enlace público de tu imagen">
+    <label for="foto">Logo o foto del comercio (opcional)</label>
+    <input id="foto" type="file" accept="image/png,image/jpeg,image/webp">
+    <small>Elegí una imagen JPG, PNG o WebP de hasta 3 MB.</small>
+    <div id="vistaPreviaFoto" class="vista-previa-foto" hidden>
+     <img id="imagenPrevia" alt="Vista previa del logo">
+     <span>Así se verá el logo de tu comercio</span>
+    </div>
    </div>
 
    <div class="campo completo">
@@ -555,52 +562,76 @@ function limpiarBusqueda(){
  mostrarComercios(comercios);
 }
 
-// Formulario de inscripción por WhatsApp
+// Vista previa del logo elegido por el comercio
+document.getElementById("foto").addEventListener("change",()=>{
+ const archivo=document.getElementById("foto").files[0];
+ const caja=document.getElementById("vistaPreviaFoto");
+ const imagen=document.getElementById("imagenPrevia");
+ if(!archivo){caja.hidden=true;imagen.removeAttribute("src");return;}
+ if(!["image/jpeg","image/png","image/webp"].includes(archivo.type)||archivo.size>3*1024*1024){
+  alert("Elegí una imagen JPG, PNG o WebP de hasta 3 MB.");
+  document.getElementById("foto").value="";
+  caja.hidden=true;imagen.removeAttribute("src");return;
+ }
+ imagen.src=URL.createObjectURL(archivo);
+ caja.hidden=false;
+});
+
+// Sube el logo al almacenamiento de Supabase
+async function subirLogo(archivo){
+ if(!archivo)return null;
+ if(!["image/jpeg","image/png","image/webp"].includes(archivo.type)||archivo.size>3*1024*1024){
+  throw new Error("El logo debe ser JPG, PNG o WebP y pesar como máximo 3 MB.");
+ }
+ const extension=archivo.type==="image/png"?"png":archivo.type==="image/webp"?"webp":"jpg";
+ const ruta="comercios/"+crypto.randomUUID()+"."+extension;
+ const {error}=await db.storage.from("logos-comercios").upload(ruta,archivo,{contentType:archivo.type,upsert:false});
+ if(error)throw error;
+ return db.storage.from("logos-comercios").getPublicUrl(ruta).data.publicUrl;
+}
+
+// Formulario de inscripción
 async function enviarSolicitud(event){
  event.preventDefault();
  const form=event.currentTarget;
  const boton=form.querySelector('button[type="submit"]');
  const textoOriginal=boton.textContent;
  boton.disabled=true;boton.textContent="Enviando solicitud...";
- const nombre=document.getElementById("nombre").value.trim();
- const rubro=document.getElementById("rubro").value;
- const descripcion=document.getElementById("descripcion").value.trim();
- const direccion=document.getElementById("direccion").value.trim();
- const telefono=document.getElementById("telefono").value.trim();
- const instagram=document.getElementById("instagram").value.trim();
- const facebook=document.getElementById("facebook").value.trim();
- const tiktok=document.getElementById("tiktok").value.trim();
- const web=document.getElementById("web").value.trim();
- const foto=document.getElementById("foto").value.trim();
- const redes=[instagram,facebook,tiktok,web].filter(Boolean);
- const detalle=descripcion+"\n\n"+[
-  instagram?"Instagram: "+instagram:"",
-  facebook?"Facebook: "+facebook:"",
-  tiktok?"TikTok: "+tiktok:"",
-  web?"Web: "+web:""
- ].filter(Boolean).join("\n");
- const {error}=await db.from("publicaciones").insert({
-  categoria:"comercios",
-  tipo_aviso:rubro,
-  titulo:nombre,
-  descripcion:descripcion,
-  zona:direccion,
-  contacto:nombre+" | "+telefono,
-  redes_url:redes[0]||null,
-  imagen_url:foto||null,
-  instagram_url:instagram||null,
-  facebook_url:facebook||null,
-  tiktok_url:tiktok||null,
-  website_url:web||null,
-  estado:"pendiente"
- });
- boton.disabled=false;boton.textContent=textoOriginal;
- if(error){console.error(error);alert("No pudimos guardar la solicitud. Intentá nuevamente o escribinos por WhatsApp.");return;}
- form.reset();
- let estado=document.getElementById("estadoInscripcion");
- if(!estado){estado=document.createElement("p");estado.id="estadoInscripcion";estado.className="nota";form.prepend(estado);}
- estado.style.cssText="display:block;background:#e5f6f1;color:#145c48;border:2px solid #20b98b;border-radius:12px;padding:18px;margin:18px 0;font-weight:600;line-height:1.6;text-align:center;";estado.setAttribute("role","status");estado.setAttribute("aria-live","polite");estado.textContent="✅ ¡Muchas gracias por sumar tu comercio a Conecta Virasoro! Recibimos los datos correctamente. Nuestro equipo revisará la información y, si está todo bien, aprobará la publicación. Por ahora, tu solicitud está pendiente de revisión.";
- estado.scrollIntoView({behavior:"smooth",block:"center"});
+ try{
+  const nombre=document.getElementById("nombre").value.trim();
+  const rubro=document.getElementById("rubro").value;
+  const descripcion=document.getElementById("descripcion").value.trim();
+  const direccion=document.getElementById("direccion").value.trim();
+  const telefono=document.getElementById("telefono").value.trim();
+  const instagram=document.getElementById("instagram").value.trim();
+  const facebook=document.getElementById("facebook").value.trim();
+  const tiktok=document.getElementById("tiktok").value.trim();
+  const web=document.getElementById("web").value.trim();
+  const archivo=document.getElementById("foto").files[0];
+  const redes=[instagram,facebook,tiktok,web].filter(Boolean);
+  const fotoUrl=await subirLogo(archivo);
+  const {error}=await db.from("publicaciones").insert({
+   categoria:"comercios",tipo_aviso:rubro,titulo:nombre,descripcion,
+   zona:direccion,contacto:nombre+" | "+telefono,redes_url:redes[0]||null,
+   imagen_url:fotoUrl,instagram_url:instagram||null,facebook_url:facebook||null,
+   tiktok_url:tiktok||null,website_url:web||null,estado:"pendiente"
+  });
+  if(error)throw error;
+  form.reset();
+  document.getElementById("vistaPreviaFoto").hidden=true;
+  document.getElementById("imagenPrevia").removeAttribute("src");
+  let estado=document.getElementById("estadoInscripcion");
+  if(!estado){estado=document.createElement("p");estado.id="estadoInscripcion";estado.className="nota";form.prepend(estado);}
+  estado.style.cssText="display:block;background:#e5f6f1;color:#145c48;border:2px solid #20b98b;border-radius:12px;padding:18px;margin:18px 0;font-weight:600;line-height:1.6;text-align:center;";
+  estado.setAttribute("role","status");estado.setAttribute("aria-live","polite");
+  estado.textContent="✅ ¡Muchas gracias por sumar tu comercio a Conecta Virasoro! Recibimos los datos correctamente. Nuestro equipo revisará la información y, si está todo bien, aprobará la publicación. Tu solicitud está pendiente de revisión.";
+  estado.scrollIntoView({behavior:"smooth",block:"center"});
+ }catch(error){
+  console.error("Error al enviar comercio:",error);
+  alert("No pudimos enviar la solicitud. "+(error.message||"Revisá la conexión e intentá nuevamente."));
+ }finally{
+  boton.disabled=false;boton.textContent=textoOriginal;
+ }
 }
 
 async function cargarComerciosAprobados(){
