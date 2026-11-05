@@ -501,7 +501,7 @@ function mostrarComercios(lista){
  [...resultados.querySelectorAll("[data-perfil]")].forEach((btn,i)=>btn.addEventListener("click",()=>abrirPerfil(lista[i])));
 }
 function enlaceCompartirPerfil(c){
- const partes=["🏪 "+(c.nombre||"Comercio en Conecta Virasoro"),c.rubro?"Rubro: "+c.rubro:"",c.descripcion||"",c.ubicacion?"📍 "+c.ubicacion:"",c.telefono?"💬 WhatsApp: "+c.telefono:"",c.instagram?"Instagram: "+c.instagram:"",c.facebook?"Facebook: "+c.facebook:"",c.tiktok?"TikTok: "+c.tiktok:"",c.web?"Web: "+c.web:"","Conocé este comercio en Conecta Virasoro: "+window.location.origin+window.location.pathname+"#resultados"].filter(Boolean).join("\n");
+ const partes=["🏪 "+(c.nombre||"Comercio en Conecta Virasoro"),c.rubro?"Rubro: "+c.rubro:"",c.descripcion||"",c.ubicacion?"📍 "+c.ubicacion:"",c.telefono?"💬 WhatsApp: "+c.telefono:"",c.instagram?"Instagram: "+c.instagram:"",c.facebook?"Facebook: "+c.facebook:"",c.tiktok?"TikTok: "+c.tiktok:"",c.web?"Web: "+c.web:"","Conocé este comercio en Conecta Virasoro: "+window.location.origin+window.location.pathname+(c.id?"?comercio="+encodeURIComponent(c.id):"#resultados")].filter(Boolean).join("\n");
  return "https://wa.me/?text="+encodeURIComponent(partes);
 }
 function abrirPerfil(c){
@@ -652,13 +652,19 @@ async function cargarComerciosAprobados(){
  (data||[]).forEach(x=>{
   const contacto=String(x.contacto||"").split("|");
   const telefono=contacto.slice(1).join("|").replace(/\D/g,"");
-  const perfil={nombre:x.titulo,rubro:x.tipo_aviso||"Otros",descripcion:String(x.descripcion||""),ubicacion:x.zona||"Gobernador Virasoro",telefono,instagram:x.instagram_url||"",facebook:x.facebook_url||"",tiktok:x.tiktok_url||"",web:x.website_url||x.redes_url||"",foto:x.imagen_url||"",emoji:"🏪"};
+  const perfil={id:x.id,nombre:x.titulo,rubro:x.tipo_aviso||"Otros",descripcion:String(x.descripcion||""),ubicacion:x.zona||"Gobernador Virasoro",telefono,instagram:x.instagram_url||"",facebook:x.facebook_url||"",tiktok:x.tiktok_url||"",web:x.website_url||x.redes_url||"",foto:x.imagen_url||"",emoji:"🏪"};
   const existente=comercios.find(c=>String(c.nombre||"").toLowerCase()===String(x.titulo||"").toLowerCase());
   if(existente){Object.assign(existente,perfil);return;}
   comercios.push(perfil);
   existentes.add(String(x.titulo||"").toLowerCase());
  });
  mostrarComercios(comercios);
+ const idSolicitado=new URLSearchParams(window.location.search).get("comercio");
+ if(idSolicitado){
+  const perfilSolicitado=comercios.find(c=>String(c.id||"")===String(idSolicitado));
+  if(perfilSolicitado){abrirPerfil(perfilSolicitado);}
+  else{document.getElementById("resultados").scrollIntoView({behavior:"smooth",block:"start"});}
+ }
 }
 
 // Mostrar MerLIa y cargar comercios aprobados desde la base de datos
